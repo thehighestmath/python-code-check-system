@@ -28,14 +28,15 @@ signal.signal(signal.SIGALRM, timeout_exception.timeout_handler)
     ('data2.in', 'data2.out'),
 ])
 def test_plus1(data_in, data_out):
-    signal.alarm(5)
+    signal.alarm(1)
     sys.stdin = open(f'../data/{data_in}')
 
     f = io.StringIO()
     with contextlib.redirect_stdout(f):
         try:
-            reload(temp_main.main())
-        except timeout_exception as exc:
+            temp_main.main()
+            # reload(temp_main.main())
+        except timeout_exception.TimeoutError as exc:
             print("function call timed out")
         finally:
             signal.alarm(0)
