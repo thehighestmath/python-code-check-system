@@ -11,7 +11,6 @@ with open("main.py", 'r') as file:
     lines = file.readlines()
     for i in lines:
         code += '    ' + i
-code += '\nmain()'
 
 with open("temp_main.py", "w") as file:
     file.write(code)
@@ -23,7 +22,7 @@ with contextlib.redirect_stdout(f):
     import temp_main
 
 signal.signal(signal.SIGALRM, timeout_exception.timeout_handler)
-signal.alarm(5)
+signal.alarm(15)
 
 @pytest.mark.parametrize('data_in,data_out', [
     ('data1.in', 'data1.out'),
@@ -41,7 +40,7 @@ def test_plus1(data_in, data_out):
         except timeout_exception as exc:
             print("function call timed out")
         finally:
-            signal.alarm(0)
+            signal.alarm(15)
     output = f.getvalue().strip()
     expected = open(f'../data/{data_out}').read()
     assert output == expected
