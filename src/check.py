@@ -3,25 +3,27 @@ import contextlib
 import io
 import sys
 import pytest
+import signal
+import timeout_exception
 
-file = open("main.py", 'r')
-code = ''
-while True:
-    line = file.readline()
-    if not line:
-        break
-    code += '\t' + line
+code = 'def main():\n'
+with open("main.py", 'r') as file:
+    lines = file.readlines()
+    for i in lines:
+        code += '    ' + i
 code += '\nmain()'
-file.close()
-with open("main.py", "w") as file:
-    file.write(f"def main():\n{code}")
+
+with open("temp_main.py", "w") as file:
+    file.write(code)
 
 sys.stdin = open('../data/data1.in')
 
 f = io.StringIO()
 with contextlib.redirect_stdout(f):
-    import main
+    import temp_main
 
+signal.signal(signal.SIGALRM, timeout_exception.timeout_handler)
+signal.alarm(5)
 
 @pytest.mark.parametrize('data_in,data_out', [
     ('data1.in', 'data1.out'),
@@ -34,7 +36,12 @@ def test_plus1(data_in, data_out):
 
     f = io.StringIO()
     with contextlib.redirect_stdout(f):
-        reload(main)
+        try:
+            reload(temp_main.main())
+        except timeout_exception as exc:
+            print("function call timed out")
+        finally:
+            signal.alarm(0)
     output = f.getvalue().strip()
     expected = open(f'../data/{data_out}').read()
     assert output == expected
