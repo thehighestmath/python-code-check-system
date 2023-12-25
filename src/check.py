@@ -4,6 +4,18 @@ import io
 import sys
 import pytest
 
+file = open("main.py", 'r')
+code = ''
+while True:
+    line = file.readline()
+    if not line:
+        break
+    code += '\t' + line
+code += '\nmain()'
+file.close()
+with open("main.py", "w") as file:
+    file.write(f"def main():\n{code}")
+
 sys.stdin = open('../data/data1.in')
 
 f = io.StringIO()
@@ -27,17 +39,3 @@ def test_plus1(data_in, data_out):
     expected = open(f'../data/{data_out}').read()
     assert output == expected
 
-
-# @pytest.mark.parametrize('data_in, data_out', [
-#     ('data3.in', 'data3.out'),
-#     ('data4.in', 'data4_out'),
-# ])
-# def test_summ_of_two_numbers(data_in, data_out):
-#     sys.stdin = open(f'../data/{data_in}')
-#
-#     f = io.StringIO()
-#     with contextlib.redirect_stdout(f):
-#         reload(main)
-#     output = f.getvalue().strip()
-#     expected = open(f'../data/{data_out}').read()
-#     assert output == expected
