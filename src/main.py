@@ -1,2 +1,3 @@
+s = 'qwe'
 while True:
-    x = 1
+    s += s
