@@ -6,14 +6,13 @@ import pytest
 import signal
 import timeout_exception
 
-code = 'def main():\n'
+code = ['def main():\n']
 with open("main.py", 'r') as file:
     lines = file.readlines()
-    for i in lines:
-        code += '    ' + i
+    code.extend(list(map(lambda line: '    ' + line, lines)))
 
 with open("temp_main.py", "w") as file:
-    file.write(code)
+    file.write(''.join(code))
 
 sys.stdin = open('../data/data1.in')
 
@@ -29,7 +28,7 @@ signal.signal(signal.SIGALRM, timeout_exception.timeout_handler)
     ('data2.in', 'data2.out'),
 ])
 def test_plus1(data_in, data_out):
-    signal.alarm(15)
+    signal.alarm(5)
     sys.stdin = open(f'../data/{data_in}')
 
     f = io.StringIO()
