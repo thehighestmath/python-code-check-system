@@ -5,9 +5,9 @@ import sys
 import pytest
 import signal
 import timeout_exception
-from memory_exception import  memory_limit, get_memory
 
-code = ['def main():\n']
+
+code = ['from memory_exception import memory_limit\n@memory_limit(int(15e6))\ndef main():\n']
 with open("main.py", 'r') as file:
     lines = file.readlines()
     code.extend(list(map(lambda line: '    ' + line, lines)))
@@ -32,7 +32,6 @@ def test_plus1(data_in, data_out):
     signal.alarm(5)
     sys.stdin = open(f'../data/{data_in}')
 
-    memory_limit()
     f = io.StringIO()
     with contextlib.redirect_stdout(f):
         try:
@@ -41,7 +40,6 @@ def test_plus1(data_in, data_out):
             sys.stderr.write("function call timed out")
         except MemoryError:
             sys.stderr.write('\nERROR: Memory Exception\n')
-            sys.exit(1)
         finally:
             signal.alarm(5)
     output = f.getvalue().strip()
