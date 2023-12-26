@@ -4,13 +4,14 @@ import sys
 import pytest
 import signal
 import timeout_exception
-from memory_exception import memory_limit, get_memory
+from memory_exception import memory_limit
 
 code = ['def main():\n']
 with open("main.py", 'r') as file:
     lines = file.readlines()
     code.extend(list(map(lambda line: '    ' + line, lines)))
 
+code += "\n"
 with open("temp_main.py", "w") as file:
     file.write(''.join(code))
 
