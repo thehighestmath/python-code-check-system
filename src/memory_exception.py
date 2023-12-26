@@ -1,19 +1,17 @@
-import resource, os, psutil
-import numpy
+import resource
+import sys
 
+def memory_limit():
+    """Limit max memory usage to half."""
+    soft, hard = resource.getrlimit(resource.RLIMIT_AS)
+    # Convert KiB to bytes, and divide in two to half
+    resource.setrlimit(resource.RLIMIT_AS, (int(get_memory() * 1024 / 5), hard))
 
-def memory_limit(max_mem):
-    def decorator(f):
-        def wrapper(*args, **kwargs):
-            process = psutil.Process(os.getpid())
-            prev_limits = resource.getrlimit(resource.RLIMIT_AS)
-            print(prev_limits)
-            print(process.memory_info().rss)
-            resource.setrlimit(resource.RLIMIT_AS, (max_mem, -1))
-            result = f(*args, **kwargs)
-            resource.setrlimit(resource.RLIMIT_AS, prev_limits)
-            return result
-
-        return wrapper
-
-    return decorator
+def get_memory():
+    with open('/proc/meminfo', 'r') as mem:
+        free_memory = 0
+        for i in mem:
+            sline = i.split()
+            if str(sline[0]) in ('MemFree:', 'Buffers:', 'Cached:'):
+                free_memory += int(sline[1])
+    return free_memory  # KiB

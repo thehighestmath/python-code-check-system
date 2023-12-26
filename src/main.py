@@ -1,3 +1,3 @@
-s = 'qwe'
-while True:
-    s += s
+a = int(input())
+b = int(input())
+print(a + b)
