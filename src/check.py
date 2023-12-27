@@ -6,7 +6,10 @@ import signal
 import timeout_exception
 from memory_exception import memory_limit
 
-code = ['def main():\n']
+code = [
+    """from import_exception import secure_importer\n
+__builtins__['__import__'] = secure_importer\n
+def main():\n"""]
 with open("main.py", 'r') as file:
     lines = file.readlines()
     code.extend(list(map(lambda line: '    ' + line, lines)))
@@ -38,12 +41,14 @@ def test_plus1(data_in, data_out):
         try:
             temp_main.main()
         except timeout_exception.TimeoutError as exc:
-            sys.stderr.write("function call timed out")
+            sys.stderr.write("\nfunction call timed out\n")
         except MemoryError:
             sys.stderr.write('\nERROR: Memory Exception\n')
-            sys.exit(1)
+            sys.exit(2)
+        except SyntaxError:
+            sys.stderr.write("\nERROR SyntaxError\n")
         finally:
-            signal.alarm(0)
+            signal.alarm(5)
     output = f.getvalue().strip()
     expected = open(f'../data/{data_out}').read()
     assert output == expected
