@@ -41,9 +41,9 @@ def test_plus1(data_in, data_out):
     f = io.StringIO()
     with contextlib.redirect_stdout(f):
         try:
-            with open("main.py", 'r') as file:
-                if "eval(" or "exec(" in file.read:
-                    raise FunctionUsageError
+            with open("temp_main.py", 'r') as file:
+                if ("eval(" or "exec(") in file.read():
+                    raise FunctionUsageError("FunctionUsageError")
             temp_main.main()
         except timeout_exception.TimeoutError as exc:
             sys.stderr.write("\nfunction call timed out\n")
