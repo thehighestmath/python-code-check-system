@@ -5,8 +5,13 @@ import pytest
 import signal
 import timeout_exception
 from memory_exception import memory_limit
+from eval_exec_function_exception import FunctionUsageError
 
-code = ['def main():\n']
+
+code = [
+    """from import_exception import secure_importer\n
+__builtins__['__import__'] = secure_importer\n\n
+def main():\n"""]
 with open("main.py", 'r') as file:
     lines = file.readlines()
     code.extend(list(map(lambda line: '    ' + line, lines)))
@@ -36,12 +41,19 @@ def test_plus1(data_in, data_out):
     f = io.StringIO()
     with contextlib.redirect_stdout(f):
         try:
+            with open("main.py", 'r') as file:
+                if "eval(" or "exec(" in file.read:
+                    raise FunctionUsageError
             temp_main.main()
         except timeout_exception.TimeoutError as exc:
             sys.stderr.write("function call timed out")
         except MemoryError:
             sys.stderr.write('\nERROR: Memory Exception\n')
-            sys.exit(1)
+            sys.exit(2)
+        except SyntaxError:
+            sys.stderr.write("\nERROR SyntaxError\n")
+        except FunctionUsageError:
+            sys.stderr.write("\nERROR eval and exec functions are restricted to use\n")
         finally:
             signal.alarm(0)
     output = f.getvalue().strip()
