@@ -6,7 +6,15 @@ import signal
 import timeout_exception
 from memory_exception import memory_limit
 
-code = ['def main():\n']
+code = [
+    "import importlib\n\n\n"
+    "def secure_importer(name, globals=None, locals=None, fromlist=(), level=0):\n"
+    "    if name != \"os\" and name != \"sys\": print(name, fromlist, level)\n"
+    "    if name == \"os\" or name == \"sys\":\n"
+    "        raise ImportError(\"module '%s' is restricted.\" % name)\n\n"
+    "    return importlib.__import__(name, globals, locals, fromlist, level)\n\n\n"
+    "__builtins__.__dict__['__import__'] = secure_importer\n\n\n"
+    "def main():\n"]
 with open("main.py", 'r') as file:
     lines = file.readlines()
     code.extend(list(map(lambda line: '    ' + line, lines)))
