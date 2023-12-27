@@ -3,11 +3,11 @@ import io
 import sys
 import pytest
 import signal
-import timeout_exception
-from memory_exception import memory_limit
+from utils import timeout_handler, memory_limit
+from exceptions import FunctionUsageError
 
 code = [
-    """from import_exception import secure_importer\n
+    """from utils import secure_importer\n
 __builtins__['__import__'] = secure_importer\n
 def main():\n"""]
 with open("main.py", 'r') as file:
@@ -23,7 +23,7 @@ f = io.StringIO()
 with contextlib.redirect_stdout(f):
     import temp_main
 
-signal.signal(signal.SIGALRM, timeout_exception.timeout_handler)
+signal.signal(signal.SIGALRM, timeout_handler)
 
 
 @pytest.mark.parametrize('data_in,data_out', [
@@ -39,14 +39,23 @@ def test_plus1(data_in, data_out):
     f = io.StringIO()
     with contextlib.redirect_stdout(f):
         try:
+            with open("temp_main.py", 'r') as fp:
+                file_content = fp.read()
+                if "eval(" in file_content or "exec(" in file_content:
+                    raise FunctionUsageError("Forbidden function call")
             temp_main.main()
-        except timeout_exception.TimeoutError as exc:
-            sys.stderr.write("\nfunction call timed out\n")
+        except TimeoutError:
+            sys.stderr.write("\nERROR: function call timed out\n")
+            sys.exit(1)
         except MemoryError:
             sys.stderr.write('\nERROR: Memory Exception\n')
             sys.exit(2)
         except SyntaxError:
-            sys.stderr.write("\nERROR SyntaxError\n")
+            sys.stderr.write("\nERROR: SyntaxError\n")
+            sys.exit(3)
+        except FunctionUsageError:
+            sys.stderr.write("\nERROR: FunctionUsageError\n")
+            sys.exit(4)
         finally:
             signal.alarm(5)
     output = f.getvalue().strip()
