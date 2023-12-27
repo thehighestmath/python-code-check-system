@@ -2,7 +2,8 @@ import importlib
 
 
 def secure_importer(name, globals=None, locals=None, fromlist=(), level=0):
-    if name != 'os' and name != 'sys':  print(name, fromlist, level)
+    if name != 'os' and name != 'sys':
+        print(name, fromlist, level)
 
     frommodule = globals['__name__'] if globals else None
     if name == "os" or name == "eval" or name == "exec":

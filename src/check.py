@@ -11,7 +11,6 @@ with open("main.py", 'r') as file:
     lines = file.readlines()
     code.extend(list(map(lambda line: '    ' + line, lines)))
 
-code += "\n"
 with open("temp_main.py", "w") as file:
     file.write(''.join(code))
 
@@ -30,9 +29,10 @@ signal.signal(signal.SIGALRM, timeout_exception.timeout_handler)
 ])
 def test_plus1(data_in, data_out):
     signal.alarm(5)
+    memory_limit(5)
+
     sys.stdin = open(f'../data/{data_in}')
 
-    memory_limit()
     f = io.StringIO()
     with contextlib.redirect_stdout(f):
         try:
@@ -43,7 +43,7 @@ def test_plus1(data_in, data_out):
             sys.stderr.write('\nERROR: Memory Exception\n')
             sys.exit(1)
         finally:
-            signal.alarm(5)
+            signal.alarm(0)
     output = f.getvalue().strip()
     expected = open(f'../data/{data_out}').read()
     assert output == expected
