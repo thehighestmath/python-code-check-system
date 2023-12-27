@@ -1,3 +1,2 @@
 class FunctionUsageError(Exception):
     pass
-
