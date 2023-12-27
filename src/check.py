@@ -39,17 +39,23 @@ def test_plus1(data_in, data_out):
     f = io.StringIO()
     with contextlib.redirect_stdout(f):
         try:
-            with open("temp_main.py", 'r') as file:
-                if ("eval(" or "exec(") in file.read():
-                    raise FunctionUsageError("FunctionUsageError")
+            with open("temp_main.py", 'r') as fp:
+                file_content = fp.read()
+                if "eval(" in file_content or "exec(" in file_content:
+                    raise FunctionUsageError("Forbidden function call")
             temp_main.main()
-        except timeout_exception.TimeoutError as exc:
-            sys.stderr.write("\nfunction call timed out\n")
+        except TimeoutError:
+            sys.stderr.write("\nERROR: function call timed out\n")
+            sys.exit(1)
         except MemoryError:
             sys.stderr.write('\nERROR: Memory Exception\n')
             sys.exit(2)
         except SyntaxError:
-            sys.stderr.write("\nERROR SyntaxError\n")
+            sys.stderr.write("\nERROR: SyntaxError\n")
+            sys.exit(3)
+        except FunctionUsageError:
+            sys.stderr.write("\nERROR: FunctionUsageError\n")
+            sys.exit(4)
         finally:
             signal.alarm(5)
     output = f.getvalue().strip()
