@@ -1,5 +1,5 @@
-import resource
 import importlib
+import resource
 
 
 def secure_importer(name, globals=None, locals=None, fromlist=(), level=0):

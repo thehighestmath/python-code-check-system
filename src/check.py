@@ -1,10 +1,17 @@
 import contextlib
 import io
-import sys
-import pytest
+import os
+import re
 import signal
-from utils import timeout_handler, memory_limit
-from exceptions import FunctionUsageError
+import sys
+from pathlib import Path
+
+import pytest
+
+from exceptions import DataError, FunctionUsageError
+from utils import memory_limit, timeout_handler
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 code = [
     """from utils import secure_importer\n
@@ -25,12 +32,19 @@ with contextlib.redirect_stdout(f):
 
 signal.signal(signal.SIGALRM, timeout_handler)
 
+data_files = os.listdir(f"{BASE_DIR}/data")
+data_in_files = list(filter(lambda name: re.match(r"data\d+\.in", name), data_files))
+data_out_files = list(filter(lambda name: re.match(r"data\d+\.out", name), data_files))
 
-@pytest.mark.parametrize('data_in,data_out', [
-    ('data1.in', 'data1.out'),
-    ('data2.in', 'data2.out'),
-])
-def test_plus1(data_in, data_out):
+
+if len(data_in_files) != len(data_out_files):
+    sys.stderr.write("DataError")
+    raise DataError("Количетсво вводных данных не совпадает с выводимым")
+
+
+@pytest.mark.parametrize('data_in', data_in_files)
+def test_plus1(data_in):
+    data_out = data_in.split('.')[0] + '.out'
     signal.alarm(5)
     memory_limit(5)
 
@@ -59,5 +73,5 @@ def test_plus1(data_in, data_out):
         finally:
             signal.alarm(5)
     output = f.getvalue().strip()
-    expected = open(f'../data/{data_out}').read()
+    expected = open(f'../data/{data_out}').read().strip()
     assert output == expected
