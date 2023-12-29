@@ -1,11 +1,15 @@
 import contextlib
+import os
 import io
 import sys
 import pytest
 import signal
-from utils import timeout_handler, memory_limit
-from exceptions import FunctionUsageError
+from utils import timeout_handler, memory_limit, create_tuples, sorting_data_files
+from exceptions import FunctionUsageError, DataError
+import re
 
+
+project_dir = "/home/artem/PycharmProjects/python_code_check_system/git_temp/python-code-check-system"
 code = [
     """from utils import secure_importer\n
 __builtins__['__import__'] = secure_importer\n
@@ -25,14 +29,34 @@ with contextlib.redirect_stdout(f):
 
 signal.signal(signal.SIGALRM, timeout_handler)
 
+data_in_files = list()
+for name in os.listdir(f"{project_dir}/data"):
+    if re.match(r"data\d+\.in", name):
+        data_in_files.append(name)
 
-@pytest.mark.parametrize('data_in,data_out', [
-    ('data1.in', 'data1.out'),
-    ('data2.in', 'data2.out'),
-])
+data_out_files = list()
+for name in os.listdir(f"{project_dir}/data"):
+    if re.match(r"data\d+\.out", name):
+        data_out_files.append(name)
+try:
+    if len(data_in_files) != len(data_out_files):
+        raise DataError("Количетсво вводных данных не совпадает с выводимым!")
+    sorting_data_files(data_in_files)
+    sorting_data_files(data_out_files)
+except DataError:
+    sys.stderr.write("DataError")
+print(f"data_out_files = {data_in_files}\n data_in_files = {data_out_files}")
+data_all = list()
+for i in range(len(data_in_files)):
+    data_tuple = create_tuples(data_in_files[i], data_out_files[i])
+    data_all.append(data_tuple)
+
+
+@pytest.mark.parametrize('data_in,data_out', data_all)
 def test_plus1(data_in, data_out):
+    print(f"data_in in test_plus1 = {data_in}")
     signal.alarm(5)
-    memory_limit(5)
+    memory_limit(10)
 
     sys.stdin = open(f'../data/{data_in}')
 
