@@ -1,14 +1,15 @@
 import contextlib
-import os
 import io
-import sys
-import pytest
-import signal
-from utils import timeout_handler, memory_limit, sorting_data_files
-from exceptions import FunctionUsageError, DataError
+import os
 import re
+import signal
+import sys
 from pathlib import Path
 
+import pytest
+
+from exceptions import DataError, FunctionUsageError
+from utils import memory_limit, timeout_handler
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -38,17 +39,16 @@ data_out_files = list(filter(lambda name: re.match(r"data\d+\.out", name), data_
 try:
     if len(data_in_files) != len(data_out_files):
         raise DataError("Количетсво вводных данных не совпадает с выводимым")
-    sorting_data_files(data_in_files)
-    sorting_data_files(data_out_files)
 except DataError:
     sys.stderr.write("DataError")
+
 print(f"data_out_files = {data_in_files}\n data_in_files = {data_out_files}")
 
-data_all = list(zip(data_in_files, data_out_files))
 
-@pytest.mark.parametrize('data_in,data_out', data_all)
-def test_plus1(data_in, data_out):
+@pytest.mark.parametrize('data_in', data_in_files)
+def test_plus1(data_in):
     print(f"data_in in test_plus1 = {data_in}")
+    data_out = data_in.split('.')[0] + '.out'
     signal.alarm(5)
     memory_limit(10)
 

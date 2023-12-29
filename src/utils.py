@@ -1,5 +1,5 @@
-import resource
 import importlib
+import resource
 
 
 def secure_importer(name, globals=None, locals=None, fromlist=(), level=0):
@@ -17,13 +17,3 @@ def memory_limit(n: int):
 
 def timeout_handler(signum, frame):
     raise TimeoutError("function call timed out")
-
-
-def sorting_data_files(data_files):
-    for index_name, name in enumerate(data_files):
-        for element in name:
-            if element.isdigit():
-                index = int(element) - 1
-                temp = data_files[index]
-                data_files[index] = name
-                data_files[index_name] = temp
