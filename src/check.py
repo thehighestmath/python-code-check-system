@@ -41,15 +41,12 @@ if len(data_in_files) != len(data_out_files):
     sys.stderr.write("DataError")
     raise DataError("Количетсво вводных данных не совпадает с выводимым")
 
-print(f"data_out_files = {data_in_files}\n data_in_files = {data_out_files}")
-
 
 @pytest.mark.parametrize('data_in', data_in_files)
 def test_plus1(data_in):
-    print(f"data_in in test_plus1 = {data_in}")
     data_out = data_in.split('.')[0] + '.out'
     signal.alarm(5)
-    memory_limit(10)
+    memory_limit(5)
 
     sys.stdin = open(f'../data/{data_in}')
 
