@@ -19,12 +19,6 @@ def timeout_handler(signum, frame):
     raise TimeoutError("function call timed out")
 
 
-def create_tuples(filename1, filename2):
-    final_tuple = tuple()
-    final_tuple += filename1, filename2,
-    return final_tuple
-
-
 def sorting_data_files(data_files):
     for index_name, name in enumerate(data_files):
         for element in name:

@@ -4,7 +4,7 @@ import io
 import sys
 import pytest
 import signal
-from utils import timeout_handler, memory_limit, create_tuples, sorting_data_files
+from utils import timeout_handler, memory_limit, sorting_data_files
 from exceptions import FunctionUsageError, DataError
 import re
 from pathlib import Path
@@ -31,15 +31,10 @@ with contextlib.redirect_stdout(f):
 
 signal.signal(signal.SIGALRM, timeout_handler)
 
-data_in_files = list()
-for name in os.listdir(f"{BASE_DIR}/data"):
-    if re.match(r"data\d+\.in", name):
-        data_in_files.append(name)
+data_files = os.listdir(f"{BASE_DIR}/data")
+data_in_files = list(filter(lambda name: re.match(r"data\d+\.in", name), data_files))
+data_out_files = list(filter(lambda name: re.match(r"data\d+\.out", name), data_files))
 
-data_out_files = list()
-for name in os.listdir(f"{BASE_DIR}/data"):
-    if re.match(r"data\d+\.out", name):
-        data_out_files.append(name)
 try:
     if len(data_in_files) != len(data_out_files):
         raise DataError("Количетсво вводных данных не совпадает с выводимым")
@@ -48,11 +43,8 @@ try:
 except DataError:
     sys.stderr.write("DataError")
 print(f"data_out_files = {data_in_files}\n data_in_files = {data_out_files}")
-data_all = list()
-for i in range(len(data_in_files)):
-    data_tuple = create_tuples(data_in_files[i], data_out_files[i])
-    data_all.append(data_tuple)
 
+data_all = list(zip(data_in_files, data_out_files))
 
 @pytest.mark.parametrize('data_in,data_out', data_all)
 def test_plus1(data_in, data_out):
