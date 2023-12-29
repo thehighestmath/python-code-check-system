@@ -7,9 +7,11 @@ import signal
 from utils import timeout_handler, memory_limit, create_tuples, sorting_data_files
 from exceptions import FunctionUsageError, DataError
 import re
+from pathlib import Path
 
 
-project_dir = "/home/artem/PycharmProjects/python_code_check_system/git_temp/python-code-check-system"
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 code = [
     """from utils import secure_importer\n
 __builtins__['__import__'] = secure_importer\n
@@ -30,17 +32,17 @@ with contextlib.redirect_stdout(f):
 signal.signal(signal.SIGALRM, timeout_handler)
 
 data_in_files = list()
-for name in os.listdir(f"{project_dir}/data"):
+for name in os.listdir(f"{BASE_DIR}/data"):
     if re.match(r"data\d+\.in", name):
         data_in_files.append(name)
 
 data_out_files = list()
-for name in os.listdir(f"{project_dir}/data"):
+for name in os.listdir(f"{BASE_DIR}/data"):
     if re.match(r"data\d+\.out", name):
         data_out_files.append(name)
 try:
     if len(data_in_files) != len(data_out_files):
-        raise DataError("Количетсво вводных данных не совпадает с выводимым!")
+        raise DataError("Количетсво вводных данных не совпадает с выводимым")
     sorting_data_files(data_in_files)
     sorting_data_files(data_out_files)
 except DataError:
