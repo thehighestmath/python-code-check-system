@@ -83,5 +83,5 @@ def test_plus1(data_in, data_out):
         finally:
             signal.alarm(5)
     output = f.getvalue().strip()
-    expected = open(f'../data/{data_out}').read()
+    expected = open(f'../data/{data_out}').read().strip()
     assert output == expected
