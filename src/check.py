@@ -36,11 +36,10 @@ data_files = os.listdir(f"{BASE_DIR}/data")
 data_in_files = list(filter(lambda name: re.match(r"data\d+\.in", name), data_files))
 data_out_files = list(filter(lambda name: re.match(r"data\d+\.out", name), data_files))
 
-try:
-    if len(data_in_files) != len(data_out_files):
-        raise DataError("Количетсво вводных данных не совпадает с выводимым")
-except DataError:
+
+if len(data_in_files) != len(data_out_files):
     sys.stderr.write("DataError")
+    raise DataError("Количетсво вводных данных не совпадает с выводимым")
 
 print(f"data_out_files = {data_in_files}\n data_in_files = {data_out_files}")
 
