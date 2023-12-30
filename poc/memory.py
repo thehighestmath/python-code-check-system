@@ -1,3 +1,6 @@
+"""
+https://stackoverflow.com/questions/46327566/how-to-have-pytest-place-memory-limits-on-tests
+"""
 import resource, os, psutil  # pip install psutil
 import numpy
 

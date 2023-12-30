@@ -8,7 +8,7 @@ class Student(models.Model):
 
 class Solution(models.Model):
     id = models.BigIntegerField(primary_key=True)
-    source_code = models.TextField()
+    source_code = models.FileField()
     task_id = models.ForeignKey('Task', on_delete=models.DO_NOTHING)
     is_accepted = models.BooleanField()
 
