@@ -2,10 +2,14 @@
 https://stackoverflow.com/questions/492519/timeout-on-a-function-call
 https://stackoverflow.com/questions/47545002/python-standard-lib-signal-attributeerror-module-signal-has-no-attribute
 """
+
+
 def timeout(func, args=(), kwargs={}, timeout_duration=1, default=None):
     import signal
+
     class TimeoutError(Exception):
         pass
+
     def handler(signum, frame):
         raise TimeoutError()
     # set the timeout handler

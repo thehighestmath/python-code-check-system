@@ -33,6 +33,7 @@ with contextlib.redirect_stdout(f):
 signal.signal(signal.SIGALRM, timeout_handler)
 
 data_files = os.listdir(f"{BASE_DIR}/data")
+print(data_files)
 data_in_files = list(filter(lambda name: re.match(r"data\d+\.in", name), data_files))
 data_out_files = list(filter(lambda name: re.match(r"data\d+\.out", name), data_files))
 
