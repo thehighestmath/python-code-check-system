@@ -1,3 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Student, Solution, Task, Tests
+
+
+admin.site.register(Student)
+admin.site.register(Solution)
+admin.site.register(Task)
+admin.site.register(Tests)
+

@@ -1,4 +1,6 @@
 from django.db import models
+import os
+from pathlib import Path
 
 
 class Student(models.Model):
@@ -9,8 +11,10 @@ class Student(models.Model):
 class Solution(models.Model):
     id = models.BigIntegerField(primary_key=True)
     source_code = models.FileField()
-    task_id = models.ForeignKey('Task', on_delete=models.DO_NOTHING)
+    task_id = models.ForeignKey('Task', on_delete=models.DO_NOTHING, null=True)
     is_accepted = models.BooleanField()
+
+    objects = models.Manager()
 
 
 class Task(models.Model):
