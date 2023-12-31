@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+from .models import Task
 
 
 def home(request):
@@ -7,11 +8,12 @@ def home(request):
 
 
 def profile(request):
-    pass
+    return render(request, 'python_code_check_system/profile.html')
 
 
 def tasks(request):
-    return render(request, 'python_code_check_system/tasks.html')
+    ctx = Task.objects.all()
+    return render(request, 'python_code_check_system/tasks.html', {'ctx' : ctx})
 
 
 def about(request):

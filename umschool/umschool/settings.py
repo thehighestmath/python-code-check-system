@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'python_code_check_system.apps.PythonCodeCheckSystemConfig'
+    'python_code_check_system.apps.PythonCodeCheckSystemConfig',
+    'tasks.apps.TasksConfig'
 ]
 
 MIDDLEWARE = [

@@ -1,11 +1,18 @@
 {% extends 'python_code_check_system/base.html' %}
 
-{% block title %} Задания {% endblock %}
+{% block title %} {{ title }} {% endblock %}
 
 {% block content %}
     <div class="features" >
         <h1>Задания</h1>
-        <p>lorem ipsu</p>
-        <button class="btn btn-warning"> Добавить </button>
+        <p>задания</p>
+        <a href ="{% url 'add_to_db_page' %}" ><button class="btn btn-warning" > Добавить </button></a>
+
+        {% for element in ctx %}
+            <div class="alert alert-warning">
+                <h3> {{ element.name }} </h3>
+                <h4>{{ element.complexity }}</h4>
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}
