@@ -100,8 +100,23 @@ main div p {
 
 main .alert-warning {
     float: left;
-    width: 500px;
+    width: 1000px;
     height: 30px;
     margin: 10px;
     text-align: left;
+}
+
+main div h3 {
+    font-size: 20;
+    color: black;
+    position: relative;
+    top: -15px;
+}
+
+main div h4 {
+    font-size: 15;
+    color: black;
+    position: relative;
+    right: -800px;
+    top: -55px;
 }

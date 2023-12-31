@@ -1,31 +1,31 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import Task
+from .models import Task, Student
+from django.views.generic import ListView
 
 
-def home(request):
-    return render(request, 'python_code_check_system/index.html')
+class TaskHome(ListView):
+    model = Task
+    template_name = 'python_code_check_system/tasks.html'
+    context_object_name = 'tasks'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['main'] = 'Задания'
+        context['title'] = 'Задания'
+        return context
 
 
-def profile(request):
-    return render(request, 'python_code_check_system/profile.html')
+class StudentHome(ListView):
+    model = Student
+    template_name = 'python_code_check_system/profile.html'
+    context_object_name = 'profile'
 
-
-def tasks(request):
-    ctx = Task.objects.all()
-    return render(request, 'python_code_check_system/tasks.html', {'ctx' : ctx})
-
-
-def about(request):
-    return render(request, 'python_code_check_system/about.html')
-
-
-def contacts(request):
-    return render(request, 'python_code_check_system/contacts.html')
-
-
-def profile(request):
-    return render(request, 'python_code_check_system/profile.html')
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['main'] = 'Профиль'
+        context['title'] = 'Профиль'
+        return context
 
 
 def add_to_db_page(request):
