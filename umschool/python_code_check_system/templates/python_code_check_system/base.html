@@ -16,13 +16,13 @@
         <img src = "{% static 'python_code_check_system/img/umschool_logotype.png'%}" alt = "Логотип">
         <h3>Навигация</h3>
         <div class="circle">
-            <img src="{% static 'python_code_check_system/img/user_photo.png'%}" alt="user_photo">
+                <a href="{% url 'profile' %}"> <img src="{% static 'python_code_check_system/img/user_photo.png'%}" alt="user_photo"> </a>
         </div>
         <ul>
-            <a href = ""><li><i class="fa-solid fa-house-chimney"></i> Главная</li></a>
-            <a href = ""><li><i class="fa-solid fa-thumbtack"></i> Задания</li></a>
-            <a href = ""><li><i class="fa-solid fa-address-card"></i> О нас</li></a>
-            <a href = ""><li><i class="fa-solid fa-paper-plane"></i> Контакты</li></a>
+            <a href = "{% url 'home' %}"><li><i class="fa-solid fa-house-chimney"></i> Главная</li></a>
+            <a href = "{% url 'tasks' %}"><li><i class="fa-solid fa-thumbtack"></i> Задания</li></a>
+            <a href = "{% url 'about' %}"><li><i class="fa-solid fa-address-card"></i> О нас</li></a>
+            <a href = "{% url 'contacts' %}"><li><i class="fa-solid fa-paper-plane"></i> Контакты</li></a>
         </ul>
     </aside>
     <main>
