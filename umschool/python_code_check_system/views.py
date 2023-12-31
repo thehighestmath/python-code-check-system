@@ -26,3 +26,7 @@ def contacts(request):
 
 def profile(request):
     return render(request, 'python_code_check_system/profile.html')
+
+
+def add_to_db_page(request):
+    return render(request, 'python_code_check_system/add_to_db_page.html')

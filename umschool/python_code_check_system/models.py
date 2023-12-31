@@ -6,7 +6,6 @@ class Student(models.Model):
     name = models.CharField(max_length=75, null=True)
     surname = models.CharField(max_length=75, null=True)
     last_name = models.CharField(max_length=75, null=True)
-    objects = models.Manager
 
     def __str__(self):
         return self.name
@@ -22,7 +21,6 @@ class Solution(models.Model):
     source_code = models.FileField()
     task_id = models.ForeignKey('Task', on_delete=models.DO_NOTHING)
     is_accepted = models.BooleanField()
-    objects = models.Manager
 
     class Meta:
         verbose_name = 'Решение'
@@ -34,7 +32,6 @@ class Task(models.Model):
     name = models.CharField(max_length=255)
     complexity = models.CharField(max_length=10, null=True)
     description = models.TextField()
-    objects = models.Manager
 
     def __str__(self):
         return self.name
@@ -49,7 +46,6 @@ class Tests(models.Model):
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
     input_data = models.TextField()
     output_data = models.TextField()
-    objects = models.Manager
 
     class Meta:
         verbose_name = 'Тест'

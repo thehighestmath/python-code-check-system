@@ -97,3 +97,11 @@ main div p {
     margin-left: 20px;
     float: left;
 }
+
+main .alert-warning {
+    float: left;
+    width: 500px;
+    height: 30px;
+    margin: 10px;
+    text-align: left;
+}
