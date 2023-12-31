@@ -17,10 +17,10 @@ class Task(models.Model):
     id = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=255)
     description = models.TextField()
-    tests = models.ForeignKey('Tests', on_delete=models.CASCADE)
 
 
 class Tests(models.Model):
     id = models.BigIntegerField(primary_key=True)
+    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
     input_data = models.TextField()
     output_data = models.TextField()
