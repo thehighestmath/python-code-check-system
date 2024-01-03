@@ -38,7 +38,7 @@ class Task(models.Model):
         verbose_name_plural = 'Задания'
 
 
-class Tests(models.Model):
+class Test(models.Model):
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
     input_data = models.TextField()
     output_data = models.TextField()
