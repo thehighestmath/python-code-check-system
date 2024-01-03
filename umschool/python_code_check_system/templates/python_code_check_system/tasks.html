@@ -3,14 +3,15 @@
 {% block title %} Задания {% endblock %}
 
 {% block content %}
-    <div class="features" >
+{% csrf_token %}
+<div class="features" xmlns="http://www.w3.org/1999/html">
         <h1>Задания</h1>
         <a href ="{% url 'add_to_db_page' %}" ><button class="btn btn-warning" > Добавить </button></a>
 
-        {% for element in tasks %}
+        {% for element in all_tasks %}
             <div class="alert alert-warning">
-                <h3> {{ element.name }} </h3>
-                <h4>{{ element.complexity }}</h4>
+                <a href="{% url 'task-detail' element.id %}"> <h3> {{ element.name }} </h3></a>
+                <a href="{% url 'task-detail' element.id %}"><h4>{{ element.complexity }}</h4> </a>
             </div>
         {% endfor %}
     </div>
