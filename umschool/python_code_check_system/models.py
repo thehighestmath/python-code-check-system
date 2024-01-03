@@ -2,7 +2,6 @@ from django.db import models
 
 
 class Student(models.Model):
-    id = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=75, null=True)
     surname = models.CharField(max_length=75, null=True)
     last_name = models.CharField(max_length=75, null=True)
@@ -16,7 +15,6 @@ class Student(models.Model):
 
 
 class Solution(models.Model):
-    id = models.BigIntegerField(primary_key=True)
     student_id = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
     source_code = models.FileField()
     task_id = models.ForeignKey('Task', on_delete=models.DO_NOTHING)
@@ -41,7 +39,6 @@ class Task(models.Model):
 
 
 class Tests(models.Model):
-    id = models.BigIntegerField(primary_key=True)
     task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
     input_data = models.TextField()
     output_data = models.TextField()
