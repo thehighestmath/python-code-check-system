@@ -77,5 +77,3 @@ class TaskDetailView(DetailView):
     model = Task
     template_name = 'python_code_check_system/task_detail_view.html'
     context_object_name = 'task'
-
-
