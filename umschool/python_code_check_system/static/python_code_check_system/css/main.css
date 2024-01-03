@@ -110,7 +110,7 @@ main div h3 {
     font-size: 20;
     color: black;
     position: relative;
-    top: -15px;
+    top: -12px;
 }
 
 main div h4 {
@@ -118,5 +118,24 @@ main div h4 {
     color: black;
     position: relative;
     right: -800px;
-    top: -55px;
+    top: -40px;
+}
+
+form {
+    margin-left: 32% ;
+    width: 500px;
+    margin-top: 50px;
+}
+
+main div form button {
+    background: orange;
+    position: relative;
+    right: -190px;
+    top: -10px;
+}
+
+.add_to_db h1 {
+    position: relative;
+    right: -340px;
+    top: 30px;
 }

@@ -3,5 +3,14 @@
 {% block title %} Добавление в базу данных {% endblock %}
 
 {% block  content  %}
-    <h1>Добавление в базу данных</h1>
+    <div class="add_to_db">
+        <h1>Добавление в базу данных</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.name }}<br>
+            {{ form.complexity }}<br>
+            {{ form.description }}<br>
+            <button class="btn btn-success" type="submit">Добавить</button>
+        </form>
+    </div>
 {% endblock %}
