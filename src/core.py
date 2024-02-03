@@ -2,15 +2,12 @@ import contextlib
 import io
 import signal
 import sys
-from pathlib import Path
 from exceptions import DataError, FunctionUsageError
 from utils import memory_limit, timeout_handler
-import temp_main
 
 
 def check(filepath: str, tests: any) -> bool:
     true_mas = []
-    BASE_DIR = Path(__file__).resolve().parent.parent
     signal.alarm(5)
     memory_limit(5)
     f = io.StringIO()
@@ -18,8 +15,8 @@ def check(filepath: str, tests: any) -> bool:
         import temp_main
     for i in range(len(tests)):
         try:
-            sys.stdin = open(f'../data/{tests[i][0]}')
-            with open(f"{BASE_DIR}/src/temp_main.py", 'r') as fp:
+            sys.stdin = f"{tests[i][0]}\n{tests[i][1]}"
+            with open(filepath, 'r') as fp:
                 file_content = fp.read()
                 if "eval(" in file_content or "exec(" in file_content:
                     raise FunctionUsageError("Forbidden function call")
@@ -39,7 +36,8 @@ def check(filepath: str, tests: any) -> bool:
         finally:
             signal.alarm(5)
         output = f.getvalue().strip()
-        expected = open(f'../data/{tests[i][1]}').read().strip()
+        expected = open(f'../data/{tests[i][2]}').read().strip()
         true_mas.append(output == expected)
-    if False not in true_mas: return True
+    if False not in true_mas:
+        return True
     return False
