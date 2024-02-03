@@ -14,8 +14,12 @@ def check(filepath: str, tests: any) -> bool:
     with contextlib.redirect_stdout(f):
         import temp_main
     for i in range(len(tests)):
+        with open("../data/data.in", "w") as fp:
+            fp.write(f"{str(tests[i][0])}\n{str(tests[i][1])}")
+        with open("../data/data.out", "w") as fp:
+            fp.write(f"{str(tests[i][2])}")
         try:
-            sys.stdin = f"{tests[i][0]}\n{tests[i][1]}"
+            sys.stdin = open("../data/data.in")
             with open(filepath, 'r') as fp:
                 file_content = fp.read()
                 if "eval(" in file_content or "exec(" in file_content:
@@ -36,7 +40,7 @@ def check(filepath: str, tests: any) -> bool:
         finally:
             signal.alarm(5)
         output = f.getvalue().strip()
-        expected = open(f'../data/{tests[i][2]}').read().strip()
+        expected = open(f'../data/data.out').read().strip()
         true_mas.append(output == expected)
     if False not in true_mas:
         return True
