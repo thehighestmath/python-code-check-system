@@ -27,20 +27,26 @@ def check(filepath: str, tests: any) -> bool:
             temp_main.main()
         except TimeoutError:
             sys.stderr.write("\nERROR: function call timed out\n")
-            sys.exit(1)
+            true_mas.append(False)
+            continue
         except MemoryError:
             sys.stderr.write('\nERROR: Memory Exception\n')
-            sys.exit(2)
+            true_mas.append(False)
+            continue
         except SyntaxError:
             sys.stderr.write("\nERROR: SyntaxError\n")
-            sys.exit(3)
+            true_mas.append(False)
+            continue
         except FunctionUsageError:
             sys.stderr.write("\nERROR: FunctionUsageError\n")
-            sys.exit(4)
+            true_mas.append(False)
+            continue
         finally:
             signal.alarm(5)
         output = f.getvalue().strip()
         expected = open(f'../data/data.out').read().strip()
+        with open(f'../data/data_test') as fp:
+            fp.write(str(expected))
         true_mas.append(output == expected)
     if False not in true_mas:
         return True
