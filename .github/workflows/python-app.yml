@@ -38,3 +38,4 @@ jobs:
       run: |
         cd src/
         pytest check.py
+        pytest test_core.py
