@@ -2,20 +2,20 @@ import contextlib
 import io
 import signal
 import sys
-from exceptions import DataError, FunctionUsageError
-from utils import memory_limit, timeout_handler
+from .exceptions import DataError, FunctionUsageError
+from .utils import memory_limit, timeout_handler
 
 
 def check(filepath: str, tests: any) -> bool:
     code = [
-        """from utils import secure_importer\n
+        """from .utils import secure_importer\n
 __builtins__['__import__'] = secure_importer\n
 def main():\n"""]
     with open(filepath, 'r') as file:
         lines = file.readlines()
         code.extend(list(map(lambda line: '    ' + line, lines)))
 
-    with open("temp_main.py", "w") as file:
+    with open("python_code_check_system/check_system/temp_main.py", "w") as file:
         file.write(''.join(code))
 
     true_mas = []
@@ -23,7 +23,7 @@ def main():\n"""]
     # memory_limit(5)
     f = io.StringIO()
     with contextlib.redirect_stdout(f):
-        import temp_main
+        from python_code_check_system.check_system import temp_main
     for i in range(len(tests)):
         f = io.StringIO()
         with contextlib.redirect_stdout(f):
