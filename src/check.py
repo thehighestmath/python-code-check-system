@@ -5,14 +5,12 @@ import re
 import signal
 import sys
 from pathlib import Path
-
 import pytest
 
 from exceptions import DataError, FunctionUsageError
 from utils import memory_limit, timeout_handler
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 code = [
     """from utils import secure_importer\n
 __builtins__['__import__'] = secure_importer\n
@@ -26,21 +24,20 @@ with open("temp_main.py", "w") as file:
 
 sys.stdin = open('../data/data1.in')
 
-f = io.StringIO()
-with contextlib.redirect_stdout(f):
-    import temp_main
-
-signal.signal(signal.SIGALRM, timeout_handler)
 
 data_files = os.listdir(f"{BASE_DIR}/data")
-print(data_files)
 data_in_files = list(filter(lambda name: re.match(r"data\d+\.in", name), data_files))
 data_out_files = list(filter(lambda name: re.match(r"data\d+\.out", name), data_files))
-
 
 if len(data_in_files) != len(data_out_files):
     sys.stderr.write("DataError")
     raise DataError("Количетсво вводных данных не совпадает с выводимым")
+
+signal.signal(signal.SIGALRM, timeout_handler)
+
+f = io.StringIO()
+with contextlib.redirect_stdout(f):
+    import temp_main
 
 
 @pytest.mark.parametrize('data_in', data_in_files)
@@ -54,7 +51,7 @@ def test_plus1(data_in):
     f = io.StringIO()
     with contextlib.redirect_stdout(f):
         try:
-            with open("temp_main.py", 'r') as fp:
+            with open(f"{BASE_DIR}/src/temp_main.py", 'r') as fp:
                 file_content = fp.read()
                 if "eval(" in file_content or "exec(" in file_content:
                     raise FunctionUsageError("Forbidden function call")
