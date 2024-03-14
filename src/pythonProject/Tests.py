@@ -1,3 +1,5 @@
+#Это код, который проверяет классы ученика
+
 import pytest
 from main import deistvia
 
