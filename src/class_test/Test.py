@@ -1,9 +1,9 @@
 #Это код, который проверяет классы ученика
 
 import pytest
-from main import deistvia
+from Student_code import operations
 
-with open("Test_znachenya.txt") as file:
+with open("Test_values.txt") as file:
     testznach_spisok = file.readlines()
 
 dlina = len(testznach_spisok)
@@ -30,3 +30,4 @@ def test_deistvia(a, b, expected_result):
     assert obj.b == b
 
     assert obj.sum() == expected_result
+    
