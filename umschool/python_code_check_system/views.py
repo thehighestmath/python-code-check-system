@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Task, Student
 from django.views.generic import ListView, CreateView, TemplateView, DetailView
 from .forms import TaskForm
+from .tasks import scheduled_task
 
 
 class TaskHomeListView(ListView):
@@ -17,7 +18,12 @@ class TaskHomeListView(ListView):
 
     def get(self, request, *args, **kwargs):
         tasks = Task.objects.all()
-        return render(request, 'python_code_check_system/tasks.html', {'all_tasks' : tasks})
+        import time
+
+        scheduled_task.delay(int(time.time()))
+        return render(
+            request, 'python_code_check_system/tasks.html', {'all_tasks': tasks}
+        )
 
 
 class StudentHomeListView(ListView):
@@ -44,9 +50,7 @@ class AddTask(CreateView):
     fields = ['name', 'complexity', 'description']
     template_name = 'python_code_check_system/add_to_db_page.html'
     success_url = 'tasks/'
-    extra_context = {
-        'form': form
-    }
+    extra_context = {'form': form}
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
