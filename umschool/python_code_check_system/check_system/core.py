@@ -10,7 +10,8 @@ def check(filepath: str, tests: list[DataInOut]) -> bool:
     code = [
         """from .utils import secure_importer\n
 __builtins__['__import__'] = secure_importer\n
-def main():\n"""]
+def main():\n"""
+    ]
     with open(filepath, 'r') as file:
         lines = file.readlines()
         code.extend(list(map(lambda line: '    ' + line, lines)))

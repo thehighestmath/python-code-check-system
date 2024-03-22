@@ -6,4 +6,3 @@ admin.site.register(Student)
 admin.site.register(Solution)
 admin.site.register(Task)
 admin.site.register(Test)
-

@@ -19,8 +19,11 @@ class TaskHomeListView(ListView):
     def get(self, request, *args, **kwargs):
         tasks = Task.objects.all()
         import time
+
         scheduled_task.delay(int(time.time()))
-        return render(request, 'python_code_check_system/tasks.html', {'all_tasks' : tasks})
+        return render(
+            request, 'python_code_check_system/tasks.html', {'all_tasks': tasks}
+        )
 
 
 class StudentHomeListView(ListView):
@@ -47,9 +50,7 @@ class AddTask(CreateView):
     fields = ['name', 'complexity', 'description']
     template_name = 'python_code_check_system/add_to_db_page.html'
     success_url = 'tasks/'
-    extra_context = {
-        'form': form
-    }
+    extra_context = {'form': form}
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()

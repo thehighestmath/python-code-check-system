@@ -8,16 +8,22 @@ class TaskForm(ModelForm):
         fields = ['name', 'complexity', 'description']
 
         widgets = {
-            "name": TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Имя задания',
-            }),
-            "complexity": TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Сложность задания',
-            }),
-            "description": Textarea(attrs={
-                'class': 'form-control',
-                'placeholder': 'Текст задания',
-            })
+            "name": TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'Имя задания',
+                }
+            ),
+            "complexity": TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'Сложность задания',
+                }
+            ),
+            "description": Textarea(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'Текст задания',
+                }
+            ),
         }
