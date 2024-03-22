@@ -1,15 +1,18 @@
 from time import sleep
 from celery import shared_task
+from pathlib import Path
+
 from .check_system.core import check
 from .check_system.types import DataInOut
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 @shared_task()
 def scheduled_task(t):
-    """Sends an email when the feedback form has been submitted."""
-    sleep(10)  # Simulate expensive operation(s) that freeze Django
+    sleep(5)
     r = check(
-        f"/home/kirillkry/python-code-check-system/umschool/python_code_check_system/check_system/main.py",  # TODO: этот тот ещё хардкод
+        f"{BASE_DIR}/python_code_check_system/check_system/main.py",
         [
             DataInOut(input_data=["1", "1"], output_data="2"),
             DataInOut(input_data=["2", "2"], output_data="4"),

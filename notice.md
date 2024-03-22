@@ -17,7 +17,12 @@ cd umschool
 python3 manage.py runserver
 ```
 
-### Terminal 2
+## Terminal 2
+```console
+redis-server
+```
+
+### Terminal 3
 ```console
 source venv/bin/activate
 cd umschool

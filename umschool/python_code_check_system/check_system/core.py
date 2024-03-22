@@ -2,7 +2,7 @@ import contextlib
 import io
 import signal
 import sys
-import tempfile
+from pathlib import Path
 from .exceptions import FunctionUsageError
 from .types import DataInOut
 
@@ -29,12 +29,11 @@ def main():\n'''
     for test in tests:
         f = io.StringIO()
         with contextlib.redirect_stdout(f):
-            with tempfile.NamedTemporaryFile(mode='w+', delete=False) as tmpfile:
-                tmpfile.write('\n'.join(test.input_data))
-                tmpfile.flush()
-                tmpfile.seek(0)
-                sys.stdin = tmpfile
+            Path("../data/").mkdir(exist_ok=True)
+            with open("../data/data.in", "w") as fp:
+                fp.write('\n'.join(test.input_data))
             try:
+                sys.stdin = open("../data/data.in")
                 with open(filepath, 'r') as fp:
                     file_content = fp.read()
                     if 'eval(' in file_content or 'exec(' in file_content:
