@@ -36,6 +36,5 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        cd src/
-        pytest check.py
-        pytest test_core.py
+        cd umschool/
+        pytest python_code_check_system/check_system/test_core.py
