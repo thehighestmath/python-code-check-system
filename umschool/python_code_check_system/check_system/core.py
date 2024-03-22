@@ -2,11 +2,11 @@ import contextlib
 import io
 import signal
 import sys
-from .exceptions import DataError, FunctionUsageError
-from .utils import memory_limit, timeout_handler
+from .exceptions import FunctionUsageError
+from .types import DataInOut
 
 
-def check(filepath: str, tests: any) -> bool:
+def check(filepath: str, tests: list[DataInOut]) -> bool:
     code = [
         """from .utils import secure_importer\n
 __builtins__['__import__'] = secure_importer\n
@@ -24,13 +24,13 @@ def main():\n"""]
     f = io.StringIO()
     with contextlib.redirect_stdout(f):
         from python_code_check_system.check_system import temp_main
-    for i in range(len(tests)):
+    for test in tests:
         f = io.StringIO()
         with contextlib.redirect_stdout(f):
             with open("../data/data.in", "w") as fp:
-                fp.write(f"{tests[i][0]}\n{tests[i][1]}")
+                fp.write("\n".join(test.input_data))
             with open("../data/data.out", "w") as fp:
-                fp.write(f"{tests[i][2]}")
+                fp.write(test.output_data)
             try:
                 sys.stdin = open("../data/data.in")
                 with open(filepath, 'r') as fp:
