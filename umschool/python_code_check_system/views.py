@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Task, Student
 from django.views.generic import ListView, CreateView, TemplateView, DetailView
 from .forms import TaskForm
-from .tasks import send_feedback_email_task
+from .tasks import scheduled_task
 
 
 class TaskHomeListView(ListView):
@@ -19,7 +19,7 @@ class TaskHomeListView(ListView):
     def get(self, request, *args, **kwargs):
         tasks = Task.objects.all()
         import time
-        send_feedback_email_task.delay(int(time.time()))
+        scheduled_task.delay(int(time.time()))
         return render(request, 'python_code_check_system/tasks.html', {'all_tasks' : tasks})
 
 
