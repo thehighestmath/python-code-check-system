@@ -1,29 +1,29 @@
-#Это код, который проверяет классы ученика
+#This is the code that checks the student's classes
 
 import pytest
 from Student_code import operations
 
 with open("Test_values.txt") as file:
-    testznach_spisok = file.readlines()
+    list_tests_values = file.readlines()
 
-dlina = len(testznach_spisok)
+length = len(list_tests_values)
 
-cortejs = []
+tuples = []
 
-for i in range (0,dlina):
+for i in range (0,length):
 
-    test_ryad = (testznach_spisok[i].replace("\n","")).split()
+    test_row = (list_tests_values[i].replace("\n","")).split()
 
-    for j in range(0, len(test_ryad)):
-        test_ryad[j] = int(test_ryad[j])
+    for j in range(0, len(test_row)):
+        test_row[j] = int(test_row[j])
 
-    cortej = tuple(test_ryad)
+    tuple1 = tuple(test_row)
 
-    cortejs.append(cortej)
+    tuples.append(tuple1)
 
-@pytest.mark.parametrize("a, b, expected_result", cortejs)
-def test_deistvia(a, b, expected_result):
-    obj = deistvia(a,b)
+@pytest.mark.parametrize("a, b, expected_result", tuples)
+def test_actions(a, b, expected_result):
+    obj = operations(a,b)
 
     assert obj.a == a
 

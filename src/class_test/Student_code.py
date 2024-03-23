@@ -1,4 +1,4 @@
-# Это тестируемый класс ( класс ученика )
+# This is the class under test (student class)
 
 class operations:
     def __init__(self, a, b):
