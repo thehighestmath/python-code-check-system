@@ -22,7 +22,7 @@ def memory_limit(max_mem):
     return decorator
 
 
-@memory_limit(int(1e16)) # bytes. 1e16 ok. 1e6 fail
+@memory_limit(int(1e16))  # bytes. 1e16 ok. 1e6 fail
 def allocate(N):
     return numpy.arange(N, dtype="u8")
 

@@ -12,8 +12,9 @@ def timeout(func, args=(), kwargs={}, timeout_duration=1, default=None):
 
     def handler(signum, frame):
         raise TimeoutError()
+
     # set the timeout handler
-    signal.signal(signal.SIGALRM, handler) 
+    signal.signal(signal.SIGALRM, handler)
     signal.alarm(timeout_duration)
     try:
         result = func(*args, **kwargs)
@@ -26,6 +27,7 @@ def timeout(func, args=(), kwargs={}, timeout_duration=1, default=None):
 
 def loop():
     import time
+
     while True:
         print('qwe')
         time.sleep(0.1)

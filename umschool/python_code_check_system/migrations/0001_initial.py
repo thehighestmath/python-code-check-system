@@ -8,14 +8,21 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
             name='Student',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('name', models.CharField(max_length=75, null=True)),
                 ('surname', models.CharField(max_length=75, null=True)),
                 ('last_name', models.CharField(max_length=75, null=True)),
@@ -28,7 +35,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Task',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('name', models.CharField(max_length=255)),
                 ('complexity', models.CharField(max_length=10, null=True)),
                 ('description', models.TextField()),
@@ -41,10 +56,24 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Tests',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('input_data', models.TextField()),
                 ('output_data', models.TextField()),
-                ('task_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='python_code_check_system.task')),
+                (
+                    'task_id',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='python_code_check_system.task',
+                    ),
+                ),
             ],
             options={
                 'verbose_name': 'Тест',
@@ -54,11 +83,32 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Solution',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('source_code', models.FileField(upload_to='')),
                 ('is_accepted', models.BooleanField()),
-                ('student_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='python_code_check_system.student')),
-                ('task_id', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='python_code_check_system.task')),
+                (
+                    'student_id',
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='python_code_check_system.student',
+                    ),
+                ),
+                (
+                    'task_id',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        to='python_code_check_system.task',
+                    ),
+                ),
             ],
             options={
                 'verbose_name': 'Решение',
