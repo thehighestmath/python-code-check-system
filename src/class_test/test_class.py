@@ -1,7 +1,5 @@
-#This is the code that checks the student's classes
-
 import pytest
-from Student_code import operations
+from student_code import Operations
 
 with open("Test_values.txt") as file:
     list_tests_values = file.readlines()
@@ -23,11 +21,10 @@ for i in range (0,length):
 
 @pytest.mark.parametrize("a, b, expected_result", tuples)
 def test_actions(a, b, expected_result):
-    obj = operations(a,b)
+    obj = Operations(a,b)
 
     assert obj.a == a
 
     assert obj.b == b
 
     assert obj.sum() == expected_result
-    
