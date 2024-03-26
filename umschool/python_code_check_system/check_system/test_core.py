@@ -1,8 +1,8 @@
 from pathlib import Path
 import pytest
 
-from .core import check
-from .types import DataInOut
+from python_code_check_system.check_system.core import check
+from python_code_check_system.check_system.types import DataInOut
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 

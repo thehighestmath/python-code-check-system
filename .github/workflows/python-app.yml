@@ -41,5 +41,5 @@ jobs:
 
     - name: Test class
       run: |
-        cd src/class_test/
-        pytest test_class.py
+        cd umschool/
+        pytest python_code_check_system/check_system/class_test/test_class.py
