@@ -41,5 +41,5 @@ jobs:
 
     - name: Test class
       run: |
-        cd src/class_test
-        pytest pytest test_class.py
+        cd src/class_test/
+        pytest test_class.py
