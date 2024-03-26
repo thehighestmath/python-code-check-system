@@ -8,12 +8,11 @@ length = len(list_tests_values)
 
 tuples = []
 
-for i in range (0,length):
+for row in list_tests_values:
 
-    test_row = (list_tests_values[i].replace("\n","")).split()
+    test_row = row.replace("\n","").split()
 
-    for j in range(0, len(test_row)):
-        test_row[j] = int(test_row[j])
+    test_row = list(map(int, test_row))
 
     tuple1 = tuple(test_row)
 
