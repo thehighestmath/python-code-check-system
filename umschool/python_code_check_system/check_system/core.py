@@ -12,7 +12,7 @@ from python_code_check_system.check_system.types import DataInOut
 
 
 def check(filepath: str, tests: list[DataInOut]) -> bool:
-    uid = str(uuid.uuid4()).replace('-', '')
+    uid = 'module_' + str(uuid.uuid4()).replace('-', '')
     file_name = f'{uid}.py'
     code = [
         '''from python_code_check_system.check_system.utils import secure_importer\n
