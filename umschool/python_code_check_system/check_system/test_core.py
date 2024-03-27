@@ -20,5 +20,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
         )
     ],
 )
-def test_check(filepath, tests):
+def test_check_plus(filepath, tests):
+    assert check(filepath, tests)
+    assert True
+
+
+@pytest.mark.parametrize(
+    "filepath, tests",
+    [
+        (
+            f"{BASE_DIR}/check_system/main2.py",
+            [
+                DataInOut(input_data=["1", "1"], output_data="0"),
+                # DataInOut(input_data=["-2", "-5"], output_data="3"),
+                # DataInOut(input_data=["3", "4"], output_data="-1"),
+            ],
+        )
+    ],
+)
+def test_check_minus(filepath, tests):
     assert check(filepath, tests)
