@@ -41,12 +41,31 @@ def main():\n'''
             Path("../data/").mkdir(exist_ok=True)
             with open("../data/data.in", "w") as fp:
                 fp.write('\n'.join(test.input_data))
-            sys.stdin = open("../data/data.in")
-            with open(filepath, 'r') as fp:
-                file_content = fp.read()
-                if 'eval(' in file_content or 'exec(' in file_content:
-                    raise FunctionUsageError('Forbidden function call')
-            temp_main.main()
+            try:
+                sys.stdin = open("../data/data.in")
+                with open(filepath, 'r') as fp:
+                    file_content = fp.read()
+                    if 'eval(' in file_content or 'exec(' in file_content:
+                        raise FunctionUsageError('Forbidden function call')
+                temp_main.main()
+            except TimeoutError:
+                sys.stderr.write('\nERROR: function call timed out\n')
+                true_mas.append(False)
+                continue
+            except MemoryError:
+                sys.stderr.write('\nERROR: Memory Exception\n')
+                true_mas.append(False)
+                continue
+            except SyntaxError:
+                sys.stderr.write('\nERROR: SyntaxError\n')
+                true_mas.append(False)
+                continue
+            except FunctionUsageError:
+                sys.stderr.write('\nERROR: FunctionUsageError\n')
+                true_mas.append(False)
+                continue
+            finally:
+                signal.alarm(5)
             actual = f.getvalue().strip()
             expected = test.output_data
             # raise Exception (str(f'{actual}, {expected}'))
