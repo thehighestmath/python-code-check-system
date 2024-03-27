@@ -22,7 +22,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 )
 def test_check_plus(filepath, tests):
     assert check(filepath, tests)
-    assert True
 
 
 @pytest.mark.parametrize(
