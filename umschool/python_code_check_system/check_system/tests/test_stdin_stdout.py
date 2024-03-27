@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
     "filepath, tests",
     [
         (
-            f"{BASE_DIR}/check_system/tests/sample_src/main_plus.py",
+            f"{BASE_DIR}/tests/sample_src/main_plus.py",
             [
                 DataInOut(input_data=["1", "1"], output_data="2"),
                 DataInOut(input_data=["2", "2"], output_data="4"),
@@ -27,7 +27,7 @@ def test_check_plus(filepath, tests):
     "filepath, tests",
     [
         (
-            f"{BASE_DIR}/check_system/tests/sample_src/main_sub.py",
+            f"{BASE_DIR}/tests/sample_src/main_sub.py",
             [
                 DataInOut(input_data=["1", "1"], output_data="0"),
                 DataInOut(input_data=["-2", "-5"], output_data="3"),

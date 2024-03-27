@@ -37,9 +37,9 @@ jobs:
     - name: Test stdin/stdout
       run: |
         cd umschool/
-        pytest python_code_check_system/check_system/test_stdin_stdout.py
+        pytest python_code_check_system/check_system/tests/test_stdin_stdout.py
 
     - name: Test class
       run: |
         cd umschool/
-        pytest python_code_check_system/check_system/test_class.py
+        pytest python_code_check_system/check_system/tests/test_class.py
