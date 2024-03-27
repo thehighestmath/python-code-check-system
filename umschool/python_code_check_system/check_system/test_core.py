@@ -32,8 +32,8 @@ def test_check_plus(filepath, tests):
             f"{BASE_DIR}/check_system/main2.py",
             [
                 DataInOut(input_data=["1", "1"], output_data="0"),
-                # DataInOut(input_data=["-2", "-5"], output_data="3"),
-                # DataInOut(input_data=["3", "4"], output_data="-1"),
+                DataInOut(input_data=["-2", "-5"], output_data="3"),
+                DataInOut(input_data=["3", "4"], output_data="-1"),
             ],
         )
     ],

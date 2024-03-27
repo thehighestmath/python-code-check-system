@@ -66,8 +66,6 @@ def main():\n"""
                 signal.alarm(5)
             actual = f.getvalue().strip()
             expected = test.output_data
-            # raise Exception (str(f'{actual}, {expected}'))
             true_mas.append(expected == actual)
     os.remove(f"python_code_check_system/check_system/{file_name}")
-    print(true_mas)
     return all(true_mas)
