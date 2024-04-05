@@ -55,3 +55,19 @@ def test_check_syntax_error(filepath, tests):
     r = check(filepath, tests)
     print(r.error_verbose)
     assert check(filepath, tests).error_verbose == 'SyntaxError'
+
+
+@pytest.mark.timeout(5)
+@pytest.mark.parametrize(
+    "filepath, tests",
+    [
+        (
+            f"{BASE_DIR}/tests/sample_src/main_loop.py",
+            [
+                DataInOut(input_data=[], output_data=[]),
+            ],
+        )
+    ],
+)
+def test_infinity_loop(filepath, tests):
+    assert check(filepath, tests).error_verbose == 'TimeoutError'
