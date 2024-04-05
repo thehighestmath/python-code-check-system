@@ -8,6 +8,7 @@ def read_file(filepath: str) -> str:
     with open(filepath) as fp:
         return fp.read()
 
+
 def are_file_the_same(filepath_1: str, filepath_2: str) -> bool:
     data1 = read_file(filepath_1)
     data2 = read_file(filepath_2)
