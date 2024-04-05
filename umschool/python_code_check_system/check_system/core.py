@@ -1,5 +1,6 @@
 import re
 import os
+import subprocess
 import shutil
 from pathlib import Path
 
@@ -36,7 +37,15 @@ def check(filepath: str, tests: list[DataInOut]) -> CheckResult:
             fp.write('\n'.join(test.input_data))
         with open(f'{base_dir}/data.out.expected', 'w') as fp:
             fp.write('\n'.join(test.output_data))
-        os.system(f'python3 -S {filepath} < {base_dir}/data.in > {base_dir}/data.out.actual 2> {base_dir}/error')
+        # os.system(f'python3 -S {filepath} < {base_dir}/data.in > {base_dir}/data.out.actual 2> {base_dir}/error')
+        process = subprocess.Popen(['python3', '-s', filepath, '<', f'{base_dir}/data.in', '>', f'{base_dir}/data.out.actual', '2>', f'{base_dir}/error'])
+        try:
+            print('Running in process', process.pid)
+            process.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            print('Timed out - killing', process.pid)
+            process.kill()
+        print("Done")
         if err := read_file(f'{base_dir}/error'):
             error = get_error_name(err)
             break
