@@ -11,7 +11,7 @@ def read_file(filepath: str) -> str:
 def are_file_the_same(filepath_1: str, filepath_2: str) -> bool:
     data1 = read_file(filepath_1)
     data2 = read_file(filepath_2)
-    return data1.strip() == data2.strip() # TODO: fix .strop()
+    return data1.strip() == data2.strip() # TODO: fix .strip()
 
 
 def check(filepath: str, tests: list[DataInOut]) -> bool:
