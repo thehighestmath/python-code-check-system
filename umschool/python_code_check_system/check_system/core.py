@@ -1,7 +1,18 @@
+import re
 import os
+import shutil
 from pathlib import Path
 
-from python_code_check_system.check_system.types import DataInOut
+from python_code_check_system.check_system.types import DataInOut, CheckResult
+
+
+def get_error_name(traceback: str) -> str:
+    error_match = re.search(r'\n(\w+): ', traceback)
+
+    if error_match:
+        error_type = error_match.group(1)
+        return error_type
+    return ''
 
 
 def read_file(filepath: str) -> str:
@@ -15,17 +26,24 @@ def are_file_the_same(filepath_1: str, filepath_2: str) -> bool:
     return data1.strip() == data2.strip() # TODO: fix .strip()
 
 
-def check(filepath: str, tests: list[DataInOut]) -> bool:
+def check(filepath: str, tests: list[DataInOut]) -> CheckResult:
     true_mas = []
+    base_dir = f'./data-{abs(hash(filepath))}'
+    error = ''
     for test in tests:
-        Path('./data/').mkdir(exist_ok=True)
-        with open('./data/data.in', 'w') as fp:
+        Path(base_dir).mkdir(exist_ok=True)
+        with open(f'{base_dir}/data.in', 'w') as fp:
             fp.write('\n'.join(test.input_data))
-        with open('./data/data.out.expected', 'w') as fp:
+        with open(f'{base_dir}/data.out.expected', 'w') as fp:
             fp.write('\n'.join(test.output_data))
-        os.system(f'python3 -S {filepath} < ./data/data.in > ./data/data.out.actual 2> ./data/error')
-        if read_file('./data/error') != '':
-            true_mas.append(False)
+        os.system(f'python3 -S {filepath} < {base_dir}/data.in > {base_dir}/data.out.actual 2> {base_dir}/error')
+        if err := read_file(f'{base_dir}/error'):
+            error = get_error_name(err)
+            break
         else:
-            true_mas.append(are_file_the_same('./data/data.out.expected', './data/data.out.actual'))
-    return all(true_mas)
+            true_mas.append(are_file_the_same(f'{base_dir}/data.out.expected', f'{base_dir}/data.out.actual'))
+    shutil.rmtree(base_dir)
+    return CheckResult(
+        verdict=all(true_mas),
+        error_verbose=error,
+    )

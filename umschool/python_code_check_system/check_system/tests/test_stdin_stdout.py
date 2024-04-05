@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
     ],
 )
 def test_check_plus(filepath, tests):
-    assert check(filepath, tests)
+    assert check(filepath, tests).verdict
 
 
 @pytest.mark.parametrize(
@@ -37,4 +37,21 @@ def test_check_plus(filepath, tests):
     ],
 )
 def test_check_minus(filepath, tests):
-    assert check(filepath, tests)
+    assert check(filepath, tests).verdict
+
+
+@pytest.mark.parametrize(
+    "filepath, tests",
+    [
+        (
+            f"{BASE_DIR}/tests/sample_src/main_syntax_error.py",
+            [
+                DataInOut(input_data=["1", "1"], output_data=["0"]),
+            ],
+        )
+    ],
+)
+def test_check_syntax_error(filepath, tests):
+    r = check(filepath, tests)
+    print(r.error_verbose)
+    assert check(filepath, tests).error_verbose == 'SyntaxError'

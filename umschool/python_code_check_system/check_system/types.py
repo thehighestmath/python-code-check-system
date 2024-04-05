@@ -14,3 +14,9 @@ class DataArgs:
     input_args: list = field(default_factory=list)
     input_kwargs: dict = field(default_factory=dict)
     output_data: ...
+
+
+@dataclass(kw_only=True, frozen=True)
+class CheckResult:
+    verdict: bool
+    error_verbose: str = ''
