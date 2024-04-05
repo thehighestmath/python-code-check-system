@@ -1,10 +1,11 @@
 import re
-import os
-import subprocess
 import shutil
+import subprocess
+import time
 from pathlib import Path
 
-from python_code_check_system.check_system.types import DataInOut, CheckResult
+import psutil
+from python_code_check_system.check_system.types import CheckResult, DataInOut
 
 
 def get_error_name(traceback: str) -> str:
@@ -27,6 +28,37 @@ def are_file_the_same(filepath_1: str, filepath_2: str) -> bool:
     return data1.strip() == data2.strip() # TODO: fix .strip()
 
 
+def check_memory(proc: subprocess.Popen) -> bool:
+    MEMORY_LIMIT = 100 * 1024 * 1024 # 100MB
+    TIME_LIMIT = 1
+    start_time = time.time()
+    while True:
+        current_time = time.time()
+        elapsed_time = current_time - start_time
+
+        if elapsed_time > TIME_LIMIT:
+            print(f"Превышено время выполнения процесса. Процесс будет остановлен.")
+            proc.kill()
+            return 'TimeoutError'
+
+        try:
+            process = psutil.Process(proc.pid)
+            memory_use = process.memory_info().rss
+        except psutil.NoSuchProcess:
+            return ''
+
+        if memory_use > MEMORY_LIMIT:
+            print(f"Процесс использовал {memory_use} байт памяти, превышая лимит. Процесс будет остановлен.")
+            proc.kill()
+            return 'MemoryError'
+
+        retcode = proc.poll()
+        if retcode is not None:
+            return ''
+
+        time.sleep(0.5)
+
+
 def check(filepath: str, tests: list[DataInOut]) -> CheckResult:
     true_mas = []
     base_dir = f'./data-{abs(hash(filepath))}'
@@ -43,17 +75,12 @@ def check(filepath: str, tests: list[DataInOut]) -> CheckResult:
             stdout=open(f'{base_dir}/data.out.actual', 'w'),
             stderr=open(f'{base_dir}/error', 'w'),
         )
-        try:
-            process.wait(timeout=2)
-        except subprocess.TimeoutExpired:
-            process.kill()
-            error = 'TimeoutError'
-            break
+        if out := check_memory(process):
+            error = out
         if err := read_file(f'{base_dir}/error'):
             error = get_error_name(err)
             break
-        else:
-            true_mas.append(are_file_the_same(f'{base_dir}/data.out.expected', f'{base_dir}/data.out.actual'))
+        true_mas.append(are_file_the_same(f'{base_dir}/data.out.expected', f'{base_dir}/data.out.actual'))
     shutil.rmtree(base_dir)
     return CheckResult(
         verdict=all(true_mas),

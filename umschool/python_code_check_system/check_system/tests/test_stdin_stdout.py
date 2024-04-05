@@ -71,3 +71,18 @@ def test_check_syntax_error(filepath, tests):
 )
 def test_infinity_loop(filepath, tests):
     assert check(filepath, tests).error_verbose == 'TimeoutError'
+
+
+@pytest.mark.parametrize(
+    "filepath, tests",
+    [
+        (
+            f"{BASE_DIR}/tests/sample_src/main_memory.py",
+            [
+                DataInOut(input_data=[], output_data=[]),
+            ],
+        )
+    ],
+)
+def test_memory_out(filepath, tests):
+    assert check(filepath, tests).error_verbose == 'MemoryError'
