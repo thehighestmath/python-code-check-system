@@ -37,7 +37,6 @@ def check_memory(proc: subprocess.Popen) -> bool:
         elapsed_time = current_time - start_time
 
         if elapsed_time > TIME_LIMIT:
-            print(f"Превышено время выполнения процесса. Процесс будет остановлен.")
             proc.kill()
             return 'TimeoutError'
 
@@ -48,7 +47,6 @@ def check_memory(proc: subprocess.Popen) -> bool:
             return ''
 
         if memory_use > MEMORY_LIMIT:
-            print(f"Процесс использовал {memory_use} байт памяти, превышая лимит. Процесс будет остановлен.")
             proc.kill()
             return 'MemoryError'
 
