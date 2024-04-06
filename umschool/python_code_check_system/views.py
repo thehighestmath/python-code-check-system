@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
-from .models import Task, Student, Solution
-from django.views.generic import ListView, CreateView, TemplateView, DetailView
-from .forms import TaskForm, SolutionForm
-from .tasks import scheduled_task, check_stundet_code_task
 from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from django.views.generic import CreateView, DetailView, ListView, TemplateView
+
+from .forms import SolutionForm, TaskForm
+from .models import Solution, Student, Task
+from .tasks import check_stundet_code_task, scheduled_task
 
 
 class TaskHomeListView(ListView):
@@ -88,15 +89,8 @@ class AddSolutionView(CreateView):
     model = Solution
     form = SolutionForm()
     fields = ['student_id', 'source_code', 'task_id']
-    # template_name = 'python_code_check_system/add_to_db_page.html'
     success_url = 'solutions/'
     extra_context = {'form': form}
-
-    # def get_context_data(self, *, object_list=None, **kwargs):
-    #     context = super().get_context_data()
-    #     context['main'] = 'Задания'
-    #     context['title'] = 'Задания'
-    #     return context
 
     def post(self, request, *args, **kwargs):
         form = SolutionForm(request.POST)
@@ -110,7 +104,6 @@ class AddSolutionView(CreateView):
 
 class SolutionListView(ListView):
     model = Solution
-    # template_name = 'python_code_check_system/tasks.html'
     context_object_name = 'solutions'
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -118,12 +111,3 @@ class SolutionListView(ListView):
         context['main'] = 'Решения'
         context['title'] = 'Решения'
         return context
-
-    # def get(self, request, *args, **kwargs):
-    #     tasks = Task.objects.all()
-    #     import time
-
-    #     scheduled_task.delay(int(time.time()))
-    #     return render(
-    #         request, 'python_code_check_system/tasks.html', {'all_tasks': tasks}
-    #     )

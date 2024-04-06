@@ -1,6 +1,6 @@
 from pathlib import Path
-import pytest
 
+import pytest
 from python_code_check_system.check_system.core import check
 from python_code_check_system.check_system.types import DataInOut
 

@@ -1,5 +1,6 @@
-from .models import Task, Solution
-from django.forms import ModelForm, TextInput, Textarea
+from django.forms import ModelForm, Textarea, TextInput
+
+from .models import Solution, Task
 
 
 class TaskForm(ModelForm):

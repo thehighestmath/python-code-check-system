@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Student, Solution, Task, Test
 
+from .models import Solution, Student, Task, Test
 
 admin.site.register(Student)
 admin.site.register(Solution)

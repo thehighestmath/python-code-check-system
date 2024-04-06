@@ -1,8 +1,8 @@
 import pytest
-
+from python_code_check_system.check_system.tests.sample_src.main_class import (
+    SumClass,
+)
 from python_code_check_system.check_system.types import DataArgs
-
-from python_code_check_system.check_system.tests.sample_src.main_class import SumClass
 
 
 @pytest.mark.parametrize(

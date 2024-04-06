@@ -1,17 +1,10 @@
 from django.contrib import admin
 from django.urls import path
 from django.views.generic import TemplateView
-from .views import (
-    TaskHomeListView,
-    StudentHomeListView,
-    AddTask,
-    HomeTemplateView,
-    ContactsTemplateView,
-    AboutTemplateView,
-    TaskDetailView,
-    AddSolutionView,
-    SolutionListView,
-)
+
+from .views import (AboutTemplateView, AddSolutionView, AddTask,
+                    ContactsTemplateView, HomeTemplateView, SolutionListView,
+                    StudentHomeListView, TaskDetailView, TaskHomeListView)
 
 urlpatterns = [
     path('', HomeTemplateView.as_view(), name='home'),

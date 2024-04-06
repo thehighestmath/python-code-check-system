@@ -1,10 +1,11 @@
-from time import sleep
-from celery import shared_task
 from pathlib import Path
+from time import sleep
 
-from .models import Solution, Test
+from celery import shared_task
+
 from .check_system.core import check
 from .check_system.types import DataInOut
+from .models import Solution, Test
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
