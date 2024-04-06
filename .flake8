@@ -6,6 +6,7 @@ exclude =
     docs/source/conf.py,
     old,
     build,
+    sample_src,
     dist
 max-complexity = 10
 max-line-lenght = 127

@@ -1,7 +1,20 @@
-import os
+import re
+import shutil
+import subprocess
+import time
 from pathlib import Path
 
-from python_code_check_system.check_system.types import DataInOut
+import psutil
+from python_code_check_system.check_system.types import CheckResult, DataInOut
+
+
+def get_error_name(traceback: str) -> str:
+    error_match = re.search(r'\n(\w+): ', traceback)
+
+    if error_match:
+        error_type = error_match.group(1)
+        return error_type
+    return ''
 
 
 def read_file(filepath: str) -> str:
@@ -15,17 +28,59 @@ def are_file_the_same(filepath_1: str, filepath_2: str) -> bool:
     return data1.strip() == data2.strip() # TODO: fix .strip()
 
 
-def check(filepath: str, tests: list[DataInOut]) -> bool:
+def check_memory(proc: subprocess.Popen) -> bool:
+    MEMORY_LIMIT = 100 * 1024 * 1024 # 100MB
+    TIME_LIMIT = 1
+    start_time = time.time()
+    while True:
+        current_time = time.time()
+        elapsed_time = current_time - start_time
+
+        if elapsed_time > TIME_LIMIT:
+            proc.kill()
+            return 'TimeoutError'
+
+        try:
+            process = psutil.Process(proc.pid)
+            memory_use = process.memory_info().rss
+        except psutil.NoSuchProcess:
+            return ''
+
+        if memory_use > MEMORY_LIMIT:
+            proc.kill()
+            return 'MemoryError'
+
+        retcode = proc.poll()
+        if retcode is not None:
+            return ''
+
+        time.sleep(0.5)
+
+
+def check(filepath: str, tests: list[DataInOut]) -> CheckResult:
     true_mas = []
+    base_dir = f'./data-{abs(hash(filepath))}'
+    error = ''
     for test in tests:
-        Path('./data/').mkdir(exist_ok=True)
-        with open('./data/data.in', 'w') as fp:
+        Path(base_dir).mkdir(exist_ok=True)
+        with open(f'{base_dir}/data.in', 'w') as fp:
             fp.write('\n'.join(test.input_data))
-        with open('./data/data.out.expected', 'w') as fp:
+        with open(f'{base_dir}/data.out.expected', 'w') as fp:
             fp.write('\n'.join(test.output_data))
-        os.system(f'python3 -S {filepath} < ./data/data.in > ./data/data.out.actual 2> ./data/error')
-        if read_file('./data/error') != '':
-            true_mas.append(False)
-        else:
-            true_mas.append(are_file_the_same('./data/data.out.expected', './data/data.out.actual'))
-    return all(true_mas)
+        process = subprocess.Popen(
+            args=['python3', '-S', filepath],
+            stdin=open(f'{base_dir}/data.in'),
+            stdout=open(f'{base_dir}/data.out.actual', 'w'),
+            stderr=open(f'{base_dir}/error', 'w'),
+        )
+        if out := check_memory(process):
+            error = out
+        if err := read_file(f'{base_dir}/error'):
+            error = get_error_name(err)
+            break
+        true_mas.append(are_file_the_same(f'{base_dir}/data.out.expected', f'{base_dir}/data.out.actual'))
+    shutil.rmtree(base_dir)
+    return CheckResult(
+        verdict=all(true_mas),
+        error_verbose=error,
+    )
