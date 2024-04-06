@@ -1,8 +1,10 @@
-from django.shortcuts import render, redirect
-from .models import Task, Student
-from django.views.generic import ListView, CreateView, TemplateView, DetailView
-from .forms import TaskForm
-from .tasks import scheduled_task
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from django.views.generic import CreateView, DetailView, ListView, TemplateView
+
+from .forms import SolutionForm, TaskForm
+from .models import Solution, Student, Task
+from .tasks import check_stundet_code_task, scheduled_task
 
 
 class TaskHomeListView(ListView):
@@ -81,3 +83,31 @@ class TaskDetailView(DetailView):
     model = Task
     template_name = 'python_code_check_system/task_detail_view.html'
     context_object_name = 'task'
+
+
+class AddSolutionView(CreateView):
+    model = Solution
+    form = SolutionForm()
+    fields = ['student_id', 'source_code', 'task_id']
+    success_url = 'solutions/'
+    extra_context = {'form': form}
+
+    def post(self, request, *args, **kwargs):
+        form = SolutionForm(request.POST)
+        if form.is_valid():
+            instance = form.save()
+            added_id = instance.id
+            check_stundet_code_task.delay(added_id)
+            return redirect('/solutions/', permanent=True)
+        return HttpResponse("Ошибка: форма не валидна")
+
+
+class SolutionListView(ListView):
+    model = Solution
+    context_object_name = 'solutions'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(SolutionListView, self).get_context_data(**kwargs)
+        context['main'] = 'Решения'
+        context['title'] = 'Решения'
+        return context

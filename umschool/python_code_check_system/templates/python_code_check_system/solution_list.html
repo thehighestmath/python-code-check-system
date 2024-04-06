@@ -1,0 +1,20 @@
+{% extends 'python_code_check_system/base.html' %}
+
+{% block title %} Решения {% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<div class="features" xmlns="http://www.w3.org/1999/html">
+        <h1>{{ title }}</h1>
+        <a href ="{% url 'solutions-add' %}" ><button class="btn btn-warning" > Добавить </button></a>
+
+        {% for element in solutions %}
+            <div class="alert alert-warning">
+                <a href="{% url 'task-detail' element.id %}"> <h3> {{ element.student_id }} </h3></a>
+                <a href="{% url 'task-detail' element.id %}"><h4>{{ element.source_code }}</h4> </a>
+                <a href="{% url 'task-detail' element.id %}"><h4>{{ element.task_id }}</h4> </a>
+                <a href="{% url 'task-detail' element.id %}"><h4>{{ element.is_accepted }}</h4> </a>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
