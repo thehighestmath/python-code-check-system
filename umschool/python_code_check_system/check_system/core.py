@@ -80,6 +80,8 @@ def check(filepath: str, tests: list[DataInOut]) -> CheckResult:
             break
         true_mas.append(are_file_the_same(f'{base_dir}/data.out.expected', f'{base_dir}/data.out.actual'))
     shutil.rmtree(base_dir)
+    if error != '':
+        true_mas.append(False)
     return CheckResult(
         verdict=all(true_mas),
         error_verbose=error,

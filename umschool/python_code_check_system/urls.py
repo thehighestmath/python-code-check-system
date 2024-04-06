@@ -9,6 +9,8 @@ from .views import (
     ContactsTemplateView,
     AboutTemplateView,
     TaskDetailView,
+    AddSolutionView,
+    SolutionListView,
 )
 
 urlpatterns = [
@@ -19,4 +21,7 @@ urlpatterns = [
     path('profile/', StudentHomeListView.as_view(), name='profile'),
     path('tasks/add_tasks/', AddTask.as_view(), name='add_to_db_page'),
     path('tasks/<int:pk>/', TaskDetailView.as_view(), name='task-detail'),
+
+    path('solutions/add/', AddSolutionView.as_view(), name='solutions-add'),
+    path('solutions/', SolutionListView.as_view(), name='solutions'),
 ]
