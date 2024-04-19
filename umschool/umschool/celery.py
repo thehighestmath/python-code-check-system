@@ -3,10 +3,15 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 
+
+REDIS_URI = os.environ.get('REDIS_URI', "redis://localhost:6379/0")
+
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'umschool.settings')
 
 app = Celery('umschool')
+app.conf.broker_url = REDIS_URI
+app.conf.result_backend = REDIS_URI
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.
