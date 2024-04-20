@@ -5,3 +5,4 @@ celery==5.3.6
 redis==5.0.1
 flower==2.0.1
 psutil==5.9.8
+psycopg2-binary==2.9.9
