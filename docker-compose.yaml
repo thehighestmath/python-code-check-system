@@ -1,6 +1,16 @@
 version: "3"
 
 services:
+  pgdb:
+    image: postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    container_name: umschool-pgdb
+    volumes:
+      - pgdbdata:/var/lib/postgresql/data/
+
   redis:
     container_name: umschool-redis
     image: redis
@@ -13,22 +23,30 @@ services:
       context: umschool
     entrypoint: celery
     command: -A umschool worker -l info
-    environment:
-      REDIS_URI: "redis://umschool-redis:6379/0"
+    env_file:
+      - .env
     depends_on:
       - redis
+      - pgdb
 
   server:
     container_name: umschool-server
     build:
       context: umschool
     restart: unless-stopped
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "python manage.py migrate &&
+             ./entrypoint.sh &&
+             python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
-    environment:
-      REDIS_URI: "redis://umschool-redis:6379/0"
+    env_file:
+      - .env
+
     depends_on:
       - celery
       - redis
+      - pgdb
 
+volumes:
+  pgdbdata: null
