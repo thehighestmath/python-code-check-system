@@ -7,18 +7,15 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    container_name: umschool-pgdb
     volumes:
       - pgdbdata:/var/lib/postgresql/data/
 
   redis:
-    container_name: umschool-redis
     image: redis
     ports:
       - "6379:6379"
 
   celery:
-    container_name: umschool-celery
     build:
       context: umschool
     entrypoint: celery
@@ -30,14 +27,13 @@ services:
       - pgdb
 
   server:
-    container_name: umschool-server
     build:
       context: umschool
     restart: unless-stopped
     command: >
       sh -c "./entrypoint.sh"
     ports:
-      - "8000:8000"
+      - "80:8000"
     env_file:
       - .env
 

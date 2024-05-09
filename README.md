@@ -14,4 +14,6 @@ docker compose up --build
 docker compose down
 ```
 
-Приложение будет доступно по следующему адресу: http://localhost:8000/
+Приложение будет доступно по следующему адресу: http://localhost:80/ или http://localhost
+
+Также развернуто тестовое окружение тут http://158.160.28.235/
