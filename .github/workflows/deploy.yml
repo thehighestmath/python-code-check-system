@@ -32,5 +32,9 @@ jobs:
         KEY: ${{ secrets.SSHKEY }}
         script: |
           cd python-code-check-system/
+          date=$(git log --pretty=format:"%ad" --date=format:"%d.%m.%Y %H:%M" -n 1)
+          search="RELEASE_DATE_TEMPLATE"
+          filename="./umschool/python_code_check_system/templates/python_code_check_system/base.html"
+          sed -i "s/$search/$date/" $filename
           docker compose down
           docker compose up -d --build
