@@ -28,7 +28,13 @@ def are_file_the_same(filepath_1: str, filepath_2: str) -> bool:
     return data1.strip() == data2.strip() # TODO: fix .strip()
 
 
+def check_forbidden_function_call(filepath: str) -> str:
+    file_content = read_file(filepath)
+    return 'eval(' in file_content or 'exec(' in file_content
+
+
 def check_memory(proc: subprocess.Popen) -> bool:
+    # TODO: these params must be specified with task
     MEMORY_LIMIT = 100 * 1024 * 1024 # 100MB
     TIME_LIMIT = 1
     start_time = time.time()
@@ -58,6 +64,12 @@ def check_memory(proc: subprocess.Popen) -> bool:
 
 
 def check(filepath: str, tests: list[DataInOut]) -> CheckResult:
+    if check_forbidden_function_call(filepath):
+        return CheckResult(
+            verdict=False,
+            error_verbose='ForbiddenFunctionCall',
+        )
+
     true_mas = []
     base_dir = f'./data-{abs(hash(filepath))}'
     error = ''
