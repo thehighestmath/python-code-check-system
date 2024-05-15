@@ -68,7 +68,7 @@ def check(filepath: str, tests: list[DataInOut]) -> CheckResult:
         return CheckResult(
             verdict=False,
             error_verbose='ForbiddenFunctionCall',
-    )
+        )
 
     true_mas = []
     base_dir = f'./data-{abs(hash(filepath))}'
