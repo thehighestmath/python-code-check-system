@@ -7,9 +7,9 @@
         <h1>Добавление в базу данных</h1>
         <form method="post">
             {% csrf_token %}
-            {{ form.student_id }}<br>
+            {{ form.student }}<br>
             {{ form.source_code }}<br>
-            {{ form.task_id }}<br>
+            {{ form.task }}<br>
             <button class="btn btn-success" type="submit">Добавить</button>
         </form>
     </div>
