@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Django test CI
 
 on:
   push:
@@ -14,7 +14,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: |
-        cd umschool/
-        docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+
+    - name: Copy env file
+      run: cp env.example .env
+
+    - name: Run tests
+      run: docker compose run --build test

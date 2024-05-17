@@ -38,13 +38,13 @@ class SolutionForm(ModelForm):
 
     class Meta:
         model = Solution
-        fields = ['student_id', 'source_code', 'task_id']
+        fields = ['student', 'source_code', 'task']
 
         # widgets = {
-        #     'student_id': TextInput(
+        #     'student': TextInput(
         #         attrs={
         #             'class': 'form-control',
-        #             'placeholder': 'student_id',
+        #             'placeholder': 'student',
         #         }
         #     ),
         #     'source_code': TextInput(
@@ -53,10 +53,10 @@ class SolutionForm(ModelForm):
         #             'placeholder': 'source_code',
         #         }
         #     ),
-        #     'task_id': Textarea(
+        #     'task': Textarea(
         #         attrs={
         #             'class': 'form-control',
-        #             'placeholder': 'task_id',
+        #             'placeholder': 'task',
         #         }
         #     ),
         # }

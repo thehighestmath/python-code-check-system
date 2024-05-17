@@ -88,7 +88,7 @@ class TaskDetailView(DetailView):
 class AddSolutionView(CreateView):
     model = Solution
     form = SolutionForm()
-    fields = ['student_id', 'source_code', 'task_id']
+    fields = ['student', 'source_code', 'task']
     success_url = 'solutions/'
     extra_context = {'form': form}
 

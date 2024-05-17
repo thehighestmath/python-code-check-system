@@ -2,9 +2,11 @@ from django.contrib import admin
 from django.urls import path
 from django.views.generic import TemplateView
 
-from .views import (AboutTemplateView, AddSolutionView, AddTask,
-                    ContactsTemplateView, HomeTemplateView, SolutionListView,
-                    StudentHomeListView, TaskDetailView, TaskHomeListView)
+from .views import (
+    AboutTemplateView, AddSolutionView, AddTask,
+    ContactsTemplateView, HomeTemplateView, SolutionListView,
+    StudentHomeListView, TaskDetailView, TaskHomeListView,
+)
 
 urlpatterns = [
     path('', HomeTemplateView.as_view(), name='home'),

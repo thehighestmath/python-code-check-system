@@ -26,6 +26,18 @@ services:
       - redis
       - pgdb
 
+  test:
+    build:
+      context: umschool
+    command: python manage.py test
+    env_file:
+      - .env
+
+    depends_on:
+      - celery
+      - redis
+      - pgdb
+
   server:
     build:
       context: umschool
