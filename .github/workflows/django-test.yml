@@ -18,11 +18,5 @@ jobs:
     - name: Copy env file
       run: cp env.example .env
 
-    - name: Build the Docker Compose stack
-      run: docker-compose up --build -d
-
     - name: Run tests
-      run: docker-compose run test
-
-    - name: Shutdown Docker Compose
-      run: docker-compose down
+      run: docker compose run --build test
