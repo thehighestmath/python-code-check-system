@@ -15,9 +15,9 @@ class Student(models.Model):
 
 
 class Solution(models.Model):
-    student_id = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
     source_code = models.TextField()
-    task_id = models.ForeignKey('Task', on_delete=models.DO_NOTHING)
+    task = models.ForeignKey('Task', on_delete=models.DO_NOTHING)
     is_accepted = models.BooleanField(default=False)
 
     class Meta:
@@ -39,7 +39,7 @@ class Task(models.Model):
 
 
 class Test(models.Model):
-    task_id = models.ForeignKey(Task, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
     input_data = models.TextField()
     output_data = models.TextField()
 

@@ -41,9 +41,8 @@ def check_stundet_code_task(solution_id: int):
                 output_data=test.output_data.split('\n'),
             )
         )
-    sleep(5)
+    sleep(5) # TODO: remove this delay. used for emulate execute long task
     r = check(path, tests_data)
-    r.verdict
     solution.is_accepted = r.verdict
     solution.save()
     print("check_stundet_code_task HERE", r)

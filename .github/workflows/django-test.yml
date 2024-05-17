@@ -1,0 +1,25 @@
+name: Django test CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build the Docker Compose stack
+      run: docker-compose up --build -d
+
+    - name: Run tests
+      run: docker-compose run test
+
+    - name: Shutdown Docker Compose
+      run: docker-compose down
