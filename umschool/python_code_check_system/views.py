@@ -1,10 +1,10 @@
-from django.http import HttpResponse
+from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from django.views.generic import CreateView, DetailView, ListView, TemplateView
 
 from .forms import SolutionForm, TaskForm
 from .models import Solution, Student, Task
-from .tasks import check_stundet_code_task, scheduled_task
+from .tasks import check_stundet_code_task
 
 
 class TaskHomeListView(ListView):
@@ -13,16 +13,13 @@ class TaskHomeListView(ListView):
     context_object_name = 'all_tasks'
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(TaskHomeListView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['main'] = 'Задания'
         context['title'] = 'Задания'
         return context
 
     def get(self, request, *args, **kwargs):
         tasks = Task.objects.all()
-        import time
-
-        scheduled_task.delay(int(time.time()))
         return render(
             request, 'python_code_check_system/tasks.html', {'all_tasks': tasks}
         )
@@ -65,6 +62,7 @@ class AddTask(CreateView):
         if form.is_valid():
             form.save()
             return redirect('/tasks/', permanent=True)
+        return HttpResponseBadRequest("Ошибка: форма не валидна")
 
 
 class HomeTemplateView(TemplateView):
@@ -99,7 +97,7 @@ class AddSolutionView(CreateView):
             added_id = instance.id
             check_stundet_code_task.delay(added_id)
             return redirect('/solutions/', permanent=True)
-        return HttpResponse("Ошибка: форма не валидна")
+        return HttpResponseBadRequest("Ошибка: форма не валидна")
 
 
 class SolutionListView(ListView):
@@ -107,7 +105,7 @@ class SolutionListView(ListView):
     context_object_name = 'solutions'
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        context = super(SolutionListView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['main'] = 'Решения'
         context['title'] = 'Решения'
         return context
