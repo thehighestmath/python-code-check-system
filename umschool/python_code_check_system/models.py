@@ -7,7 +7,7 @@ class Student(models.Model):
     last_name = models.CharField(max_length=75, null=True)
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     class Meta:
         verbose_name = 'Студент'
@@ -31,7 +31,7 @@ class Task(models.Model):
     description = models.TextField()
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     class Meta:
         verbose_name = 'Задание'

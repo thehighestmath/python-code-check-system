@@ -2,16 +2,16 @@ import importlib
 import resource
 
 
-def secure_importer(name, globals=None, locals=None, fromlist=(), level=0):
-    frommodule = globals['__name__'] if globals else None
+def secure_importer(name, globals_=None, locals_=None, fromlist=(), level=0):
+    frommodule = globals_['__name__'] if globals_ else None
     if name in ("os", "sys") and frommodule not in ("os", "sys"):
         raise ImportError(f"module {name} is restricted.")
 
-    return importlib.__import__(name, globals, locals, fromlist, level)
+    return importlib.__import__(name, globals_, locals_, fromlist, level)
 
 
 def memory_limit(n: int):
-    soft, hard = resource.getrlimit(resource.RLIMIT_AS)
+    _, hard = resource.getrlimit(resource.RLIMIT_AS)
     resource.setrlimit(resource.RLIMIT_AS, (n * 1024 * 1024, hard))
 
 

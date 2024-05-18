@@ -28,7 +28,6 @@ def scheduled_task(t):
 @shared_task()
 def check_stundet_code_task(solution_id: int):
     solution = Solution.objects.get(id=solution_id)
-    solution.source_code
     path = f"{BASE_DIR}/python_code_check_system/check_system/main.py"
     with open(path, 'w') as fp:
         fp.write(solution.source_code)

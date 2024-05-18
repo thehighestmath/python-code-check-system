@@ -35,8 +35,8 @@ def check_forbidden_function_call(filepath: str) -> str:
 
 def check_memory(proc: subprocess.Popen) -> bool:
     # TODO: these params must be specified with task
-    MEMORY_LIMIT = 100 * 1024 * 1024 # 100MB
-    TIME_LIMIT = 1
+    MEMORY_LIMIT = 100 * 1024 * 1024 # pylint: disable=invalid-name # 100MB
+    TIME_LIMIT = 1 # pylint: disable=invalid-name
     start_time = time.time()
     while True:
         current_time = time.time()

@@ -1,7 +1,8 @@
 from django.test import TestCase
-from umschool.celery import app
+
 from python_code_check_system.models import Solution, Student, Task, Test
 from python_code_check_system.tasks import check_stundet_code_task
+from umschool.celery import app
 
 
 class SolutionTestCase(TestCase):
@@ -16,7 +17,7 @@ class SolutionTestCase(TestCase):
         task = Task.objects.create(name='Test task', complexity='1', description='')
         Test.objects.create(task=task, input_data='5\n2', output_data='3')
         solution = Solution.objects.create(
-            student=student, 
+            student=student,
             source_code='''
 a = int(input())
 b = int(input())
