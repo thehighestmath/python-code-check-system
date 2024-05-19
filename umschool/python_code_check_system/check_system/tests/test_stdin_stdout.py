@@ -116,4 +116,6 @@ def test_forbidden_function_call(filepath, tests):
     ],
 )
 def test_check_failed_test(filepath, tests, expected_error):
-    assert check(filepath, tests).error_verbose == expected_error
+    result = check(filepath, tests)
+    assert not result.verdict
+    assert result.error_verbose == expected_error
