@@ -70,11 +70,11 @@ def check(filepath: str, tests: list[DataInOut]) -> CheckResult:
             error_verbose='ForbiddenFunctionCall',
         )
 
-    true_mas = []
+    results = []
     base_dir = f'./data-{abs(hash(filepath))}'
+    Path(base_dir).mkdir(exist_ok=True)
     error = ''
-    for test in tests:
-        Path(base_dir).mkdir(exist_ok=True)
+    for i, test in enumerate(tests):
         with open(f'{base_dir}/data.in', 'w') as fp:
             fp.write('\n'.join(test.input_data))
         with open(f'{base_dir}/data.out.expected', 'w') as fp:
@@ -90,11 +90,15 @@ def check(filepath: str, tests: list[DataInOut]) -> CheckResult:
         if err := read_file(f'{base_dir}/error'):
             error = get_error_name(err)
             break
-        true_mas.append(are_file_the_same(f'{base_dir}/data.out.expected', f'{base_dir}/data.out.actual'))
+        result = are_file_the_same(f'{base_dir}/data.out.expected', f'{base_dir}/data.out.actual')
+        results.append(result)
+        if not result:
+            error = f'test {i + 1} failed'
+            break
     shutil.rmtree(base_dir)
     if error != '':
-        true_mas.append(False)
+        results.append(False)
     return CheckResult(
-        verdict=all(true_mas),
+        verdict=all(results),
         error_verbose=error,
     )
