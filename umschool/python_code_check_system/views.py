@@ -82,6 +82,10 @@ class TaskDetailView(DetailView):
     template_name = 'python_code_check_system/task_detail_view.html'
     context_object_name = 'task'
 
+class SolutionDetailView(DetailView):
+    model = Solution
+    template_name = 'python_code_check_system/solution_detail_view.html'
+    context_object_name = 'solution'
 
 class AddSolutionView(CreateView):
     model = Solution
