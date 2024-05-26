@@ -2,6 +2,7 @@ import re
 import shutil
 import subprocess
 import time
+import os
 from pathlib import Path
 
 import psutil
@@ -63,15 +64,32 @@ def check_memory(proc: subprocess.Popen) -> bool:
         time.sleep(0.5)
 
 
+def restrict_import(filepath: str) -> str:
+    file_content = read_file(filepath)
+    head_file = '''# [BEGIN]
+import sys
+sys.modules['os'] = None
+sys.modules['sys'] = None
+del sys
+# [END]
+
+'''
+    new_filepath = f'{filepath}_new.py'
+    with open(new_filepath, 'w') as fp:
+        fp.write(head_file + file_content)
+    return new_filepath
+
+
 def check(filepath: str, tests: list[DataInOut]) -> CheckResult:
-    if check_forbidden_function_call(filepath):
+    new_filepath = restrict_import(filepath)
+    if check_forbidden_function_call(new_filepath):
         return CheckResult(
             verdict=False,
             error_verbose='ForbiddenFunctionCall',
         )
 
     results = []
-    base_dir = f'./data-{abs(hash(filepath))}'
+    base_dir = f'./data-{abs(hash(new_filepath))}'
     Path(base_dir).mkdir(exist_ok=True)
     error = ''
     for i, test in enumerate(tests):
@@ -80,7 +98,7 @@ def check(filepath: str, tests: list[DataInOut]) -> CheckResult:
         with open(f'{base_dir}/data.out.expected', 'w') as fp:
             fp.write('\n'.join(test.output_data))
         process = subprocess.Popen(
-            args=['python3', '-S', filepath],
+            args=['python3', '-S', new_filepath],
             stdin=open(f'{base_dir}/data.in'),
             stdout=open(f'{base_dir}/data.out.actual', 'w'),
             stderr=open(f'{base_dir}/error', 'w'),
@@ -95,6 +113,7 @@ def check(filepath: str, tests: list[DataInOut]) -> CheckResult:
         if not result:
             error = f'test {i + 1} failed'
             break
+    os.remove(new_filepath)
     shutil.rmtree(base_dir)
     if error != '':
         results.append(False)
