@@ -119,3 +119,30 @@ def test_check_failed_test(filepath, tests, expected_error):
     result = check(filepath, tests)
     assert not result.verdict
     assert result.error_verbose == expected_error
+
+
+@pytest.mark.parametrize(
+    "filepath, tests, expected_error",
+    [
+        pytest.param(
+            f"{BASE_DIR}/tests/sample_src/main_import_os.py",
+            [
+                DataInOut(input_data=[], output_data=["2"]),
+            ],
+            "ModuleNotFoundError",
+            id="import-os",
+        ),
+        pytest.param(
+            f"{BASE_DIR}/tests/sample_src/main_import_sys.py",
+            [
+                DataInOut(input_data=[], output_data=["2"]),
+            ],
+            "ModuleNotFoundError",
+            id="import-sys",
+        ),
+    ],
+)
+def test_forbiddden_imports(filepath, tests, expected_error):
+    result = check(filepath, tests)
+    assert not result.verdict
+    assert result.error_verbose == expected_error
