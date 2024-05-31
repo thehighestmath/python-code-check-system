@@ -10,10 +10,10 @@
 
         {% for element in solutions %}
             <div class="alert alert-warning">
-                <a href="{% url 'task-detail' element.id %}"> <h3> {{ element.student }} </h3></a>
-                <a href="{% url 'task-detail' element.id %}"><h4>{{ element.source_code }}</h4> </a>
-                <a href="{% url 'task-detail' element.id %}"><h4>{{ element.task }}</h4> </a>
-                <a href="{% url 'task-detail' element.id %}"><h4>{{ element.is_accepted }}</h4> </a>
+                <a href="{% url 'solution-detail' element.id %}"> <h3> {{ element.student }} </h3> </a>
+                <a href="{% url 'solution-detail' element.id %}"><h4>{{ element.source_code }}</h4> </a>
+                <a href="{% url 'solution-detail' element.id %}"><h4>{{ element.task }}</h4> </a>
+                <a href="{% url 'solution-detail' element.id %}"><h4>{{ element.is_accepted }}</h4> </a>
             </div>
         {% endfor %}
     </div>
