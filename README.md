@@ -4,9 +4,9 @@
 - windows: https://docs.docker.com/desktop/install/windows-install/
 - linux: https://docs.docker.com/engine/install/ubuntu/
 
-> Note
-В связи с событиями 30.05.2024 образы с hub.docker.com с российских IP адресов скачать нельзя
-Образы, необходимые для проекта, тут https://disk.yandex.ru/d/goJyB9dny51Lsg
+> [!WARNING]
+> В связи с событиями 30.05.2024 образы с hub.docker.com с российских IP адресов скачать нельзя
+> Образы, необходимые для проекта, тут https://disk.yandex.ru/d/goJyB9dny51Lsg
 
 Нужно скачать следующие:
 - redis-7.0.15-alpine3.20.tar
@@ -20,7 +20,8 @@ docker load -i postgres-16.3-alpine3.20.tar
 docker load -i python-3.12.3-slim.tar
 ```
 
-Вы должны увидеть примерно следующий вывод
+> [!NOTE]
+> Вы должны увидеть примерно следующий вывод
 ```console
 ➜  docker-images docker load -i redis-7.0.15-alpine3.20.tar
 Loaded image: redis:7.0.15-alpine3.20
@@ -30,9 +31,9 @@ Loaded image: postgres:16.3-alpine3.20
 Loaded image: python:3.12.3-slim
 ```
 
-Не забудьте выставить концы строк LF, а не CRLF
-
-Создайте файл `.env` в корне репозитория и поместите туда содержимое файла `env.example`
+> [!IMPORTANT]
+> Не забудьте выставить концы строк LF, а не CRLF
+> Создайте файл `.env` в корне репозитория и поместите туда содержимое файла `env.example`
 
 Великолепно, теперь можно поднимать приложение одной командой!
 
