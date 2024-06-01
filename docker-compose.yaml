@@ -2,16 +2,14 @@ version: "3"
 
 services:
   pgdb:
-    image: postgres
-    environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+    image: postgres:16.3-alpine3.20
+    env_file:
+      - .env
     volumes:
       - pgdbdata:/var/lib/postgresql/data/
 
   redis:
-    image: redis
+    image: redis:7.0.15-alpine3.20
     ports:
       - "6379:6379"
 
