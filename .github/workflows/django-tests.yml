@@ -18,12 +18,5 @@ jobs:
     - name: Copy env file
       run: cp env.example .env
 
-    - name: Start demons
-      run: docker compose up -d
-
-    - name: Check services
-      run: |
-        docker-compose ps
-
     - name: Run tests
       run: docker compose run --build test
