@@ -18,9 +18,10 @@ jobs:
     - name: Copy env file
       run: cp env.example .env
 
+    - name: Run tests
+      run: docker compose -d
+
     - name: Check services
       run: |
         docker-compose ps
 
-    # - name: Run tests
-    #   run: docker compose run --build test
