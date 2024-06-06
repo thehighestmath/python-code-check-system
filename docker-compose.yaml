@@ -2,7 +2,7 @@ version: "3"
 
 services:
   pgdb:
-    image: postgres:16.3-alpine3.20
+    image: postgres:16.3
     env_file:
       - .env
     volumes:
@@ -27,7 +27,7 @@ services:
   test:
     build:
       context: umschool
-    command: python manage.py test
+    command: python manage.py test --noinput
     env_file:
       - .env
 

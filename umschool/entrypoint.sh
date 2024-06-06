@@ -2,7 +2,7 @@
 
 python manage.py migrate
 
-user_exists=$(python manage.py shell -c "from django.contrib.auth.models import User; print(User.objects.filter(username='$DJANGO_SUPERUSER_USERNAME').exists())")
+user_exists=$(python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); print(User.objects.filter(username='$DJANGO_SUPERUSER_USERNAME').exists())")
 
 if [[ $user_exists != "True" ]]
 then
