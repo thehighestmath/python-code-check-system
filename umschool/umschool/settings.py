@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.postgres',
+    'account_service.apps.AccountServiceConfig',
     'python_code_check_system.apps.PythonCodeCheckSystemConfig',
 ]
 
@@ -144,3 +145,5 @@ CELERY_RESULT_BACKEND = REDIS_URI
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+AUTH_USER_MODEL = "account_service.CustomUser"
+

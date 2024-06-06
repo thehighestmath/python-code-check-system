@@ -1,21 +1,10 @@
 from django.db import models
 
-
-class Student(models.Model):
-    name = models.CharField(max_length=75, null=True)
-    surname = models.CharField(max_length=75, null=True)
-    last_name = models.CharField(max_length=75, null=True)
-
-    def __str__(self):
-        return str(self.name)
-
-    class Meta:
-        verbose_name = 'Студент'
-        verbose_name_plural = 'Студенты'
+from account_service.models import Student
 
 
 class Solution(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True, related_name='solution')
     source_code = models.TextField()
     task = models.ForeignKey('Task', on_delete=models.DO_NOTHING)
     is_accepted = models.BooleanField(default=False)

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block main %}
+  <main class="container">
+    <div class="row">
+      <div class="col-8 col-lg-4 offset-2 offset-lg-4 m-3 p-3">
+        <h2>Зарегистрируйтесь</h2>
+        <p class="lead">Кто вы?</p>
+        <a href="{% url 'blogger_signup' %}" class="btn btn-lg btn-outline-primary m-2" role="button">Я блоггер</a>
+        <a href="{% url 'musician_signup' %}" class="btn btn-lg btn-outline-primary m-2" role="button">Я музыкант</a>
+      </div>
+    </div>
+  </main>
+{% endblock %}

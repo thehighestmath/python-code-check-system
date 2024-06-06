@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block main %}
+  <main class="container mt-3">
+    <div class="d-flex justify-content-center">
+      <h4>Зарегистрируйтесь как {{ user_type }}</h4>
+    </div>
+
+    <div class="center-block row d-flex justify-content-center">
+      <form class="w-50 p-3" enctype="multipart/form-data" method="post" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        {% crispy form 'bootstrap4' %}
+      </form>
+    </div>
+  </main>
+{% endblock %}

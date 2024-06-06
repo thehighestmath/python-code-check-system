@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block main %}
+  <main class="container">
+    <div class="row">
+      <div class="col-8 col-lg-4 offset-2 offset-lg-4">
+        <form method="post">
+          <div class="text-center mt-5 b-1">
+            <h1 class="h3 mb-3 font-weight-normal">Аккаунт</h1>
+            {% if user.is_blogger %}
+              Blogger
+            {% endif %}
+            {% if user.is_musician %}
+              Musician
+            {% endif %}
+          </div>
+          {% csrf_token %}
+          {% crispy base_form 'bootstrap4' %}
+          {% if advanced_form %}
+            {% crispy advanced_form 'bootstrap4' %}
+          {% endif %}
+        </form>
+        <a href="{% url 'offers' %}" class="btn btn-lg btn-outline-primary btn-block">Мои предложения</a>
+      </div>
+    </div>
+  </main>
+{% endblock %}
