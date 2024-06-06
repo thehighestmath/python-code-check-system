@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'account_service/base.html' %}
 {% load crispy_forms_filters %}
 {% load static %}
 {% block main %}
@@ -13,7 +13,7 @@
           {% csrf_token %}
           {% crispy form 'bootstrap4' %}
         </form>
-        <div class="mt-4 text-center"><p>Нет аккаунта? <a href="{% url 'signup' %}">Зарегистрируйтесь!</a></p></div>
+        <div class="mt-4 text-center"><p>Нет аккаунта? <a href="{% url 'account_service:signup' %}">Зарегистрируйтесь!</a></p></div>
       </div>
     </div>
   </main>

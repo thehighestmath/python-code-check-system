@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'account_service/base.html' %}
 {% load crispy_forms_tags %}
 {% block main %}
   <main class="container">
@@ -7,11 +7,11 @@
         <form method="post">
           <div class="text-center mt-5 b-1">
             <h1 class="h3 mb-3 font-weight-normal">Аккаунт</h1>
-            {% if user.is_blogger %}
-              Blogger
+            {% if user.is_student %}
+              Student
             {% endif %}
-            {% if user.is_musician %}
-              Musician
+            {% if user.is_teacher %}
+              Teacher
             {% endif %}
           </div>
           {% csrf_token %}
@@ -20,7 +20,6 @@
             {% crispy advanced_form 'bootstrap4' %}
           {% endif %}
         </form>
-        <a href="{% url 'offers' %}" class="btn btn-lg btn-outline-primary btn-block">Мои предложения</a>
       </div>
     </div>
   </main>

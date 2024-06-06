@@ -38,13 +38,13 @@ class ProfileView(View):
 
 
 class SignUpView(TemplateView):
-    template_name = 'account_service/signup.html'
+    template_name = 'account_service/singup.html'
 
 
 class StudentSignUpView(CreateView):
     model = CustomUser
     form_class = StudentSignUpForm
-    template_name = 'account_service/signup_form.html'
+    template_name = 'account_service/singup_form.html'
 
     def get_context_data(self, **kwargs):
         kwargs['user_type'] = 'студент'
@@ -53,13 +53,13 @@ class StudentSignUpView(CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        return redirect('profile')
+        return redirect('account_service:profile')
 
 
 class TeacherSignUpView(CreateView):
     model = CustomUser
     form_class = TeacherSignUpForm
-    template_name = 'account_service/signup_form.html'
+    template_name = 'account_service/singup_form.html'
 
     def get_context_data(self, **kwargs):
         kwargs['user_type'] = 'учитель'
@@ -68,4 +68,4 @@ class TeacherSignUpView(CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        return redirect('profile')
+        return redirect('account_service:profile')

@@ -34,10 +34,10 @@
         <a class="nav-item nav-link disabled" href="#">Музыкантам</a>
         <a class="nav-item nav-link disabled" href="#">Оставить заявку</a>
         {% if not user.is_authenticated %}
-          <a class="nav-item nav-link" href="{% url 'login' %}">Вход</a>
+          <a class="nav-item nav-link" href="{% url 'account_service:login' %}">Вход</a>
         {% else %}
-          <a class="nav-item nav-link" href="{% url 'profile' %}">Аккаунт</a>
-          <a class="nav-item nav-link" href="{% url 'logout' %}">Выход</a>
+          <a class="nav-item nav-link" href="{% url 'account_service:profile' %}">Аккаунт</a>
+          <a class="nav-item nav-link" href="{% url 'account_service:logout' %}">Выход</a>
         {% endif %}
       </div>
     </div>

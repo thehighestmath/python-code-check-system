@@ -102,22 +102,12 @@ class BaseSignUpForm(UserCreationForm):
 
 
 class StudentSignUpForm(BaseSignUpForm):
-    subscriber_count = forms.IntegerField(label='Количество подписчиков', min_value=0, required=False)
-    tiktok_link = forms.URLField(label='Ссылка на tiktok', required=False)
-    youtube_link = forms.URLField(label='Ссылка на youtube', required=False)
-
-    field_order = ['first_name', 'last_name', 'subscriber_count', 'tiktok_link', 'youtube_link']
-
     @transaction.atomic
     def save(self):
         user = super().save(commit=False)
-        user.is_blogger = True
+        user.is_student = True
         user.save()
-        data = self.cleaned_data
-        for key in ('first_name', 'last_name', 'username', 'password1', 'password2'):
-            data.pop(key, None)
-        data['subscriber_count'] = 0 if data['subscriber_count'] is None else data['subscriber_count']
-        student = Student.objects.create(user=user, **data)
+        student = Student.objects.create(user=user)
         return user
 
 
@@ -125,7 +115,7 @@ class TeacherSignUpForm(BaseSignUpForm):
     @transaction.atomic
     def save(self):
         user = super().save(commit=False)
-        user.is_musician = True
+        user.is_teacher = True
         user.save()
         teacher = Teacher.objects.create(user=user)
         return user
