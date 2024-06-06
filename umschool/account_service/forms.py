@@ -1,6 +1,5 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserChangeForm
 from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
@@ -103,19 +102,19 @@ class BaseSignUpForm(UserCreationForm):
 
 class StudentSignUpForm(BaseSignUpForm):
     @transaction.atomic
-    def save(self):
-        user = super().save(commit=False)
+    def save(self, commit=False):
+        user = super().save(commit=commit)
         user.is_student = True
         user.save()
-        student = Student.objects.create(user=user)
+        Student.objects.create(user=user)
         return user
 
 
 class TeacherSignUpForm(BaseSignUpForm):
     @transaction.atomic
-    def save(self):
-        user = super().save(commit=False)
+    def save(self, commit=False):
+        user = super().save(commit=commit)
         user.is_teacher = True
         user.save()
-        teacher = Teacher.objects.create(user=user)
+        Teacher.objects.create(user=user)
         return user

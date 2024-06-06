@@ -7,14 +7,14 @@ class CustomUser(AbstractUser):
     is_teacher = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.username
+        return str(self.username)
 
 
 class Student(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True, related_name='student')
 
     def __str__(self):
-        return self.user.username
+        return str(self.user.username)
 
     class Meta:
         verbose_name = 'Студент'
@@ -25,7 +25,7 @@ class Teacher(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True, related_name='teacher')
 
     def __str__(self):
-        return self.user.username
+        return str(self.user.username)
 
     class Meta:
         verbose_name = 'Учитель'

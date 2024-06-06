@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': environ.get('POSTGRES_DB', 'postgres'),
         'USER': environ.get('POSTGRES_USER', 'postgres'),
         'PASSWORD': environ.get('POSTGRES_PASSWORD', 'postgres'),
-        'HOST': environ.get('POSTGRES_HOST', 'umschool-pgdb'),
+        'HOST': environ.get('POSTGRES_HOST', 'pgdb'),
         'PORT': '5432',
     }
 }

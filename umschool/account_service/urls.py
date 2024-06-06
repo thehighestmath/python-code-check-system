@@ -1,10 +1,17 @@
 from django.contrib.auth.views import LogoutView
 from django.urls import path
 
-from .views import *
+from .views import (
+    CustomLoginView,
+    SignUpView,
+    StudentSignUpView,
+    TeacherSignUpView,
+    ProfileView,
+)
 
 
-app_name = 'account_service'
+app_name = 'account_service' # pylint: disable=invalid-name
+
 urlpatterns = [
     path('login/', CustomLoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
