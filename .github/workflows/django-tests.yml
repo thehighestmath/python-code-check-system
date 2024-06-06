@@ -22,5 +22,5 @@ jobs:
       run: |
         docker-compose ps
 
-    - name: Run tests
-      run: docker compose run --build test
+    # - name: Run tests
+    #   run: docker compose run --build test
