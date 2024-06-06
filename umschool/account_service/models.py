@@ -12,12 +12,9 @@ class CustomUser(AbstractUser):
 
 class Student(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True, related_name='student')
-    name = models.CharField(max_length=75, null=True)
-    surname = models.CharField(max_length=75, null=True)
-    last_name = models.CharField(max_length=75, null=True)
 
     def __str__(self):
-        return str(self.name)
+        return self.user.username
 
     class Meta:
         verbose_name = 'Студент'
@@ -26,12 +23,9 @@ class Student(models.Model):
 
 class Teacher(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True, related_name='teacher')
-    name = models.CharField(max_length=75, null=True)
-    surname = models.CharField(max_length=75, null=True)
-    last_name = models.CharField(max_length=75, null=True)
 
     def __str__(self):
-        return str(self.name)
+        return self.user.username
 
     class Meta:
         verbose_name = 'Учитель'
