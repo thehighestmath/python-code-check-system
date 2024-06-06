@@ -2,7 +2,7 @@ version: "3"
 
 services:
   pgdb:
-    image: postgres
+    image: postgres:16.3
     env_file:
       - .env
     volumes:
