@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from python_code_check_system.models import Solution, Student, Task, Test
+from python_code_check_system.models import Solution, Task, Test
 from python_code_check_system.tasks import check_stundet_code_task
 from umschool.celery import app
 
