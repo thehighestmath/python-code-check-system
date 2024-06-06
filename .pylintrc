@@ -1,6 +1,7 @@
 [MASTER]
 
 ignore-paths=
+    ^umschool/account_service/migrations.*$,
     ^umschool/python_code_check_system/migrations.*$,
     ^poc/.*$,
     ^umschool/manage.py$,
