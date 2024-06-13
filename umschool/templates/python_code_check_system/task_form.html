@@ -1,0 +1,24 @@
+{% extends 'python_code_check_system/base.html' %}
+
+{% block title %} Добавление в базу данных нового задания {% endblock %}
+
+{% block  content  %}
+{% load static %}
+    <div class="add_to_db">
+        <h1>Добавление в базу данных нового задания</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form }}
+            {{ tests.management_form }}
+            {% for form in tests.forms %}
+                <div class="test-form">
+                    {{ form.as_p }}
+                </div>
+            {% endfor %}
+            <button type="button" id="add-more">Добавить тест</button>
+            <button class="btn btn-success" type="submit">Добавить</button>
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'python_code_check_system/js/formset_handlers.js' %}"></script>
+{% endblock %}

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap4',
     'account_service.apps.AccountServiceConfig',
     'python_code_check_system.apps.PythonCodeCheckSystemConfig',
+    'extra_views',
 ]
 
 MIDDLEWARE = [
@@ -88,7 +89,11 @@ DATABASES = {
         'PASSWORD': environ.get('POSTGRES_PASSWORD', 'postgres'),
         'HOST': environ.get('POSTGRES_HOST', 'pgdb'),
         'PORT': '5432',
-    }
+    },
+    # "default": {
+    #     "ENGINE": "django.db.backends.sqlite3",
+    #     "NAME": "db.sqlite3",
+    # }
 }
 
 
@@ -126,7 +131,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
