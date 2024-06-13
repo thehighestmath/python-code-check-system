@@ -89,10 +89,10 @@ DATABASES = {
         'HOST': environ.get('POSTGRES_HOST', 'pgdb'),
         'PORT': '5432',
     },
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "db.sqlite3",
-    }
+    # "default": {
+    #     "ENGINE": "django.db.backends.sqlite3",
+    #     "NAME": "db.sqlite3",
+    # }
 }
 
 
