@@ -1,8 +1,9 @@
 from django.http import HttpResponseBadRequest
+from django.urls import reverse_lazy
 from django.shortcuts import redirect, render
 from django.views.generic import CreateView, DetailView, ListView, TemplateView
 
-from .forms import SolutionForm, TaskForm
+from .forms import SolutionForm, TaskForm, TestFormSet
 from .models import Solution, Student, Task
 from .tasks import check_stundet_code_task
 
@@ -45,24 +46,28 @@ class StudentHomeListView(ListView):
 
 class AddTask(CreateView):
     model = Task
-    form = TaskForm()
-    fields = ['name', 'complexity', 'description']
-    template_name = 'python_code_check_system/add_to_db_page.html'
-    success_url = 'tasks/'
-    extra_context = {'form': form}
+    form_class = TaskForm
+    success_url = reverse_lazy('tasks')
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['main'] = 'Задания'
         context['title'] = 'Задания'
+        if self.request.POST:
+            context['tests'] = TestFormSet(self.request.POST)
+        else:
+            context['tests'] = TestFormSet()
         return context
 
-    def post(self, request, *args, **kwargs):
-        form = TaskForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('/tasks/', permanent=True)
-        return HttpResponseBadRequest("Ошибка: форма не валидна")
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        tests_form_set = self.get_context_data()['tests']
+        if tests_form_set.is_valid():
+            tests_form_set.instance = self.object
+            tests_form_set.save()
+        else:
+            return HttpResponseBadRequest("Ошибка: неверные данные в формсете")
+        return response
 
 
 class HomeTemplateView(TemplateView):

@@ -1,0 +1,26 @@
+{% extends 'account_service/base.html' %}
+{% load crispy_forms_tags %}
+{% block main %}
+  <main class="container">
+    <div class="row">
+      <div class="col-8 col-lg-4 offset-2 offset-lg-4">
+        <form method="post">
+          <div class="text-center mt-5 b-1">
+            <h1 class="h3 mb-3 font-weight-normal">Аккаунт</h1>
+            {% if user.is_student %}
+              Student
+            {% endif %}
+            {% if user.is_teacher %}
+              Teacher
+            {% endif %}
+          </div>
+          {% csrf_token %}
+          {% crispy base_form 'bootstrap4' %}
+          {% if advanced_form %}
+            {% crispy advanced_form 'bootstrap4' %}
+          {% endif %}
+        </form>
+      </div>
+    </div>
+  </main>
+{% endblock %}

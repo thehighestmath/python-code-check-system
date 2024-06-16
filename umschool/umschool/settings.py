@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.postgres',
+    'crispy_forms',
+    'crispy_bootstrap4',
+    'account_service.apps.AccountServiceConfig',
     'python_code_check_system.apps.PythonCodeCheckSystemConfig',
 ]
 
@@ -58,7 +61,7 @@ ROOT_URLCONF = 'umschool.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,9 +86,13 @@ DATABASES = {
         'NAME': environ.get('POSTGRES_DB', 'postgres'),
         'USER': environ.get('POSTGRES_USER', 'postgres'),
         'PASSWORD': environ.get('POSTGRES_PASSWORD', 'postgres'),
-        'HOST': environ.get('POSTGRES_HOST', 'umschool-pgdb'),
+        'HOST': environ.get('POSTGRES_HOST', 'pgdb'),
         'PORT': '5432',
-    }
+    },
+    # "default": {
+    #     "ENGINE": "django.db.backends.sqlite3",
+    #     "NAME": "db.sqlite3",
+    # }
 }
 
 
@@ -123,7 +130,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
@@ -144,3 +151,7 @@ CELERY_RESULT_BACKEND = REDIS_URI
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+AUTH_USER_MODEL = "account_service.CustomUser"
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+CRISPY_TEMPLATE_PACK = "bootstrap4"

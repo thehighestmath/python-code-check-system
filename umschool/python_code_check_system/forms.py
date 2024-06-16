@@ -1,7 +1,9 @@
 from django.forms import ModelForm, Textarea, TextInput
+from django.forms import inlineformset_factory
 
-from .models import Solution, Task
+from .models import Solution, Task, Test
 
+TestFormSet = inlineformset_factory(Task, Test, fields=('input_data', 'output_data'), extra=1, can_delete=True)
 
 class TaskForm(ModelForm):
     class Meta:
