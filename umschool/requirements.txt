@@ -1,6 +1,6 @@
 pytest==7.4.3
 pytest-timeout==2.3.1
-django==5.0.3
+django==5.0.9
 celery==5.3.6
 redis==5.0.1
 flower==2.0.1
