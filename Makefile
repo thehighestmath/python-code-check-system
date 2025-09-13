@@ -55,10 +55,8 @@ test-docker: ## Запустить тесты в Docker
 
 lint: ## Проверить код линтерами
 	@echo "$(GREEN)Проверка кода линтерами...$(NC)"
-	@echo "$(YELLOW)Running Pylint...$(NC)"
-	pylint $(shell find umschool -name "*.py") --disable=C0114,C0116 || true
 	@echo "$(YELLOW)Running Flake8...$(NC)"
-	flake8 $(shell find umschool -name "*.py") --max-line-length=120 --ignore=E501,W503 || true
+	flake8 $(shell find umschool -name "*.py") || true
 	@echo "$(YELLOW)Running Bandit...$(NC)"
 	bandit -r umschool/ || true
 

@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
 from account_service.models import Student
-from ..models import Task, Solution, Test
+from ..models import Task, Solution
 
 User = get_user_model()
 

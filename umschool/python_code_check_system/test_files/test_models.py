@@ -4,7 +4,6 @@ Tests for models.
 
 from django.test import TestCase
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError
 
 from account_service.models import CustomUser, Student
 from ..models import Task, Solution, Test

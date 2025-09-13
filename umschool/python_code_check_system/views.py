@@ -1,6 +1,6 @@
 from django.http import HttpResponseBadRequest
 from django.urls import reverse_lazy
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from django.views.generic import CreateView, DetailView, ListView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 

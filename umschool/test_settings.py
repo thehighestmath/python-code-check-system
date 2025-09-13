@@ -3,8 +3,7 @@
 Отдельный файл настроек для запуска тестов без Redis и с SQLite
 """
 
-import os
-from umschool.settings import *
+from umschool.settings import *  # noqa: F403
 
 # Переопределяем настройки для тестирования
 DEBUG = True

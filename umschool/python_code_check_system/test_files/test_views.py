@@ -5,7 +5,6 @@ Tests for views.
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 
 from account_service.models import Student
 from ..models import Task, Solution, Test
@@ -49,7 +48,7 @@ class TaskHomeListViewTest(TestCase):
     def test_only_active_tasks_shown(self):
         """Тест отображения только активных заданий."""
         # Создаем неактивное задание
-        inactive_task = Task.objects.create(
+        Task.objects.create(
             name='Inactive Task', complexity='easy', description='Inactive description', is_active=False
         )
 
@@ -98,7 +97,7 @@ class AddSolutionViewTest(TestCase):
         """Тест отправки решения."""
         self.client.login(username='testuser', password='testpass123')
         # Создаем студента
-        student, created = Student.objects.get_or_create(user=self.user)
+        student, _ = Student.objects.get_or_create(user=self.user)
         data = {'source_code': 'print("Hello, World!")\nprint("This is a test solution")', 'task': self.task.id}
         response = self.client.post(reverse('solutions-add'), data)
         self.assertIn(response.status_code, [301, 302])  # Перенаправление после успешной отправки
@@ -173,9 +172,7 @@ class SolutionListViewTest(TestCase):
             username='otheruser', email='other@example.com', password='otherpass123', is_student=True
         )
         other_student = Student.objects.create(user=other_user)
-        other_solution = Solution.objects.create(
-            student=other_student, task=self.task, source_code='print("Other solution")'
-        )
+        Solution.objects.create(student=other_student, task=self.task, source_code='print("Other solution")')
 
         self.client.login(username='testuser', password='testpass123')
         response = self.client.get(reverse('solutions'))

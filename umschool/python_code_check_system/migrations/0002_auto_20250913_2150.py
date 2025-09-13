@@ -2,7 +2,6 @@
 
 from django.db import migrations, models
 import django.utils.timezone
-from django.db import models as models_deletion
 
 
 class Migration(migrations.Migration):

@@ -3,7 +3,6 @@ Tests for forms.
 """
 
 from django.test import TestCase
-from django.core.exceptions import ValidationError
 
 from account_service.models import CustomUser, Student
 from ..models import Task
