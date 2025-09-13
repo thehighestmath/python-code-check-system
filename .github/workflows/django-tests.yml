@@ -1,22 +1,117 @@
-name: Django tests
+name: Django Tests
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "main" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "main" ]
+
+permissions:
+  contents: read
 
 jobs:
-
-  build:
-
+  test:
     runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
 
     steps:
     - uses: actions/checkout@v4
 
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.12"
+
     - name: Copy env file
       run: cp env.example .env
 
-    - name: Run tests
-      run: docker compose run --build test
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y postgresql-client
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r umschool/requirements.txt
+
+    - name: Wait for database
+      run: |
+        while ! pg_isready -h localhost -p 5432 -U postgres; do
+          echo "Waiting for database..."
+          sleep 2
+        done
+
+    - name: Run Django migrations
+      run: |
+        cd umschool/
+        python manage.py migrate --settings=umschool.settings
+
+    - name: Run all Django tests
+      run: |
+        cd umschool/
+        python manage.py test --settings=umschool.settings --verbosity=2
+
+    - name: Run model tests
+      run: |
+        cd umschool/
+        python manage.py test python_code_check_system.test_files.test_models --settings=umschool.settings --verbosity=2
+
+    - name: Run form tests
+      run: |
+        cd umschool/
+        python manage.py test python_code_check_system.test_files.test_forms --settings=umschool.settings --verbosity=2
+
+    - name: Run view tests
+      run: |
+        cd umschool/
+        python manage.py test python_code_check_system.test_files.test_views --settings=umschool.settings --verbosity=2
+
+    - name: Run core system tests
+      run: |
+        cd umschool/
+        python manage.py test python_code_check_system.check_system.tests --settings=umschool.settings --verbosity=2
+
+    - name: Run main tests
+      run: |
+        cd umschool/
+        python manage.py test python_code_check_system.tests --settings=umschool.settings --verbosity=2
+
+    - name: Test coverage
+      run: |
+        cd umschool/
+        pip install coverage
+        coverage run --source='.' manage.py test --settings=umschool.settings
+        coverage report
+        coverage html
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./umschool/htmlcov/coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false

@@ -1,13 +1,26 @@
 {% extends 'python_code_check_system/base.html' %}
 
-{% block title %} Задания {% endblock %}
+{% block title %} {{ task.name }} {% endblock %}
 
 {% block content %}
     <div class="features">
         <h1> {{ task.name }} </h1>
-        <p> {{ task.complexity }} </p> <br>
-        <p> {{ task.description }} </p> <br>
-        <input type = "file" accept = ".py">
-        <a><button class="btn btn-success" type="submit" >Добавить решение</button></a>
+        <p><strong>Сложность:</strong> {{ task.complexity }} </p>
+        <p><strong>Описание:</strong></p>
+        <p> {{ task.description }} </p>
+        
+        {% if user.is_authenticated and user.is_student %}
+            <a href="{% url 'solutions-add' %}?task={{ task.id }}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Добавить решение
+            </a>
+        {% elif not user.is_authenticated %}
+            <div class="alert alert-info">
+                <p>Для добавления решения необходимо <a href="{% url 'account_service:login' %}">войти в систему</a></p>
+            </div>
+        {% else %}
+            <div class="alert alert-warning">
+                <p>Только студенты могут добавлять решения</p>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

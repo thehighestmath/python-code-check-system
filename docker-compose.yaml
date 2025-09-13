@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   pgdb:
     image: postgres:16.3
@@ -7,22 +5,39 @@ services:
       - .env
     volumes:
       - pgdbdata:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
   redis:
     image: redis:7.0.15-alpine3.20
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
   celery:
     build:
       context: umschool
     entrypoint: celery
-    command: -A umschool worker -l info
+    command: -A umschool worker -l info --uid=1000 --gid=1000
     env_file:
       - .env
     depends_on:
-      - redis
-      - pgdb
+      redis:
+        condition: service_healthy
+      pgdb:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - ./umschool:/umschool
 
   test:
     build:
@@ -30,27 +45,36 @@ services:
     command: python manage.py test --noinput
     env_file:
       - .env
-
     depends_on:
-      - celery
-      - redis
-      - pgdb
+      redis:
+        condition: service_healthy
+      pgdb:
+        condition: service_healthy
+    volumes:
+      - ./umschool:/umschool
 
   server:
     build:
       context: umschool
     restart: unless-stopped
     command: >
-      sh -c "./entrypoint.sh"
+      sh -c "chmod +x entrypoint.sh && ./entrypoint.sh"
     ports:
       - "80:8000"
     env_file:
       - .env
-
     depends_on:
-      - celery
-      - redis
-      - pgdb
+      redis:
+        condition: service_healthy
+      pgdb:
+        condition: service_healthy
+    volumes:
+      - ./umschool:/umschool
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   pgdbdata: null

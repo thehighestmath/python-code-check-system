@@ -1,17 +1,19 @@
 from django.http import HttpResponseBadRequest
 from django.urls import reverse_lazy
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from django.views.generic import CreateView, DetailView, ListView, TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import SolutionForm, TaskForm, TestFormSet
 from .models import Solution, Student, Task
 from .tasks import check_stundet_code_task
 
 
-class TaskHomeListView(ListView):
+class TaskHomeListView(LoginRequiredMixin, ListView):
     model = Task
     template_name = 'python_code_check_system/tasks.html'
     context_object_name = 'all_tasks'
+    login_url = '/accounts/login/'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -19,11 +21,13 @@ class TaskHomeListView(ListView):
         context['title'] = 'Задания'
         return context
 
+    def get_queryset(self):
+        """Показываем только активные задания."""
+        return Task.objects.filter(is_active=True).order_by('-created_at')
+
     def get(self, request, *args, **kwargs):
-        tasks = Task.objects.all()
-        return render(
-            request, 'python_code_check_system/tasks.html', {'all_tasks': tasks}
-        )
+        tasks = self.get_queryset()
+        return render(request, 'python_code_check_system/tasks.html', {'all_tasks': tasks})
 
 
 class StudentHomeListView(ListView):
@@ -88,29 +92,69 @@ class TaskDetailView(DetailView):
     context_object_name = 'task'
 
 
-class AddSolutionView(CreateView):
+class AddSolutionView(LoginRequiredMixin, CreateView):
     model = Solution
-    form = SolutionForm()
-    fields = ['student', 'source_code', 'task']
-    success_url = 'solutions/'
-    extra_context = {'form': form}
+    form_class = SolutionForm
+    template_name = 'python_code_check_system/solution_form.html'
+    success_url = '/solutions/'
+    login_url = '/accounts/login/'
 
-    def post(self, request, *args, **kwargs):
-        form = SolutionForm(request.POST)
-        if form.is_valid():
-            instance = form.save()
-            added_id = instance.id
-            check_stundet_code_task.delay(added_id)
-            return redirect('/solutions/', permanent=True)
-        return HttpResponseBadRequest("Ошибка: форма не валидна")
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        task_id = self.request.GET.get('task')
+        if task_id:
+            kwargs['task_id'] = task_id
+        return kwargs
+
+    def form_valid(self, form):
+        # Автоматически устанавливаем студента
+        if self.request.user.is_student:
+            try:
+                student = Student.objects.get(user=self.request.user)
+                form.instance.student = student
+            except Student.DoesNotExist:
+                # Создаем студента если его нет
+                student = Student.objects.create(user=self.request.user)
+                form.instance.student = student
+
+        response = super().form_valid(form)
+        # Запускаем проверку кода
+        check_stundet_code_task.delay(self.object.id)
+        return response
 
 
-class SolutionListView(ListView):
+class SolutionListView(LoginRequiredMixin, ListView):
     model = Solution
     context_object_name = 'solutions'
+    login_url = '/accounts/login/'
+
+    def get_queryset(self):
+        """Показываем только решения текущего пользователя."""
+        if self.request.user.is_student:
+            try:
+                student = Student.objects.get(user=self.request.user)
+                return Solution.objects.filter(student=student).order_by('-created_at')
+            except Student.DoesNotExist:
+                return Solution.objects.none()
+        return Solution.objects.none()
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['main'] = 'Решения'
         context['title'] = 'Решения'
+        return context
+
+
+class SolutionDetailView(DetailView):
+    """Детальный просмотр решения."""
+
+    model = Solution
+    template_name = 'python_code_check_system/solution_detail.html'
+    context_object_name = 'solution'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['main'] = 'Решение'
+        context['title'] = f"Решение для {self.object.task.name}"
         return context

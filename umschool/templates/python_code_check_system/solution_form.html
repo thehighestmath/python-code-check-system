@@ -1,16 +1,21 @@
 {% extends 'python_code_check_system/base.html' %}
 
-{% block title %} Добавление в базу данных {% endblock %}
+{% block title %} Добавление решения {% endblock %}
 
 {% block  content  %}
     <div class="add_to_db">
-        <h1>Добавление в базу данных</h1>
+        <h1>Добавление решения</h1>
         <form method="post">
             {% csrf_token %}
-            {{ form.student }}<br>
-            {{ form.source_code }}<br>
-            {{ form.task }}<br>
-            <button class="btn btn-success" type="submit">Добавить</button>
+            <div class="form-group">
+                <label for="{{ form.task.id_for_label }}">Задание:</label>
+                {{ form.task }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.source_code.id_for_label }}">Код решения:</label>
+                {{ form.source_code }}
+            </div>
+            <button class="btn btn-success" type="submit">Отправить решение</button>
         </form>
     </div>
 {% endblock %}
