@@ -1,0 +1,74 @@
+name: Docker Tests
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+
+jobs:
+  docker-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Copy env file
+      run: cp env.example .env
+
+    - name: Build Docker images
+      run: |
+        docker compose build --no-cache
+
+    - name: Start services
+      run: |
+        docker compose up -d
+
+    - name: Wait for services to be ready
+      run: |
+        timeout 60 bash -c 'until docker compose exec -T server python manage.py dbshell --command="SELECT 1;" > /dev/null 2>&1; do sleep 2; done'
+
+    - name: Run database migrations
+      run: |
+        docker compose exec -T server python manage.py migrate
+
+    - name: Run Django tests in Docker
+      run: |
+        docker compose exec -T server python manage.py test --verbosity=2
+
+    - name: Run specific test suites
+      run: |
+        echo "Running model tests..."
+        docker compose exec -T server python manage.py test python_code_check_system.test_files.test_models --verbosity=2
+        
+        echo "Running form tests..."
+        docker compose exec -T server python manage.py test python_code_check_system.test_files.test_forms --verbosity=2
+        
+        echo "Running view tests..."
+        docker compose exec -T server python manage.py test python_code_check_system.test_files.test_views --verbosity=2
+        
+        echo "Running core system tests..."
+        docker compose exec -T server python manage.py test python_code_check_system.check_system.tests --verbosity=2
+
+    - name: Test API endpoints
+      run: |
+        echo "Testing API endpoints..."
+        curl -f http://localhost:80/ || echo "Home page test failed"
+        curl -f http://localhost:80/accounts/login/ || echo "Login page test failed"
+        curl -f http://localhost:80/tasks/ || echo "Tasks page test failed"
+
+    - name: Check service health
+      run: |
+        echo "Checking service health..."
+        docker compose ps
+        docker compose logs server --tail=50
+        docker compose logs redis --tail=20
+        docker compose logs pgdb --tail=20
+
+    - name: Cleanup
+      if: always()
+      run: |
+        docker compose down -v

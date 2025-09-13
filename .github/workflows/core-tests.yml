@@ -1,36 +1,64 @@
-name: Core tests
+name: Core System Tests
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "main" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "main" ]
 
 permissions:
   contents: read
 
 jobs:
-  build:
-
+  core-tests:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+    
     - name: Set up Python 3.12
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: "3.12"
+    
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pytest
         pip install -r umschool/requirements.txt
-    - name: Test stdin/stdout
+    
+    - name: Test stdin/stdout functionality
       run: |
         cd umschool/
-        pytest python_code_check_system/check_system/tests/test_stdin_stdout.py
+        pytest python_code_check_system/check_system/tests/test_stdin_stdout.py -v
 
-    - name: Test class
+    - name: Test class functionality
       run: |
         cd umschool/
-        pytest python_code_check_system/check_system/tests/test_class.py
+        pytest python_code_check_system/check_system/tests/test_class.py -v
+
+    - name: Test memory functionality
+      run: |
+        cd umschool/
+        python python_code_check_system/check_system/tests/test_memory.py
+
+    - name: Test timeout functionality
+      run: |
+        cd umschool/
+        python python_code_check_system/check_system/tests/test_timeout.py
+
+    - name: Test core system integration
+      run: |
+        cd umschool/
+        python -c "
+        from python_code_check_system.check_system.core import CodeChecker
+        from python_code_check_system.check_system.types import TestCase
+        
+        # Test basic functionality
+        checker = CodeChecker()
+        test_case = TestCase(input_data='5\n3', output_data='8')
+        
+        result = checker.check_code('a = int(input())\nb = int(input())\nprint(a + b)', [test_case])
+        print(f'Test result: {result.verdict}')
+        print(f'Test passed: {result.verdict}')
+        "

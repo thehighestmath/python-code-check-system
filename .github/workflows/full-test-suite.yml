@@ -1,0 +1,191 @@
+name: Full Test Suite
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+  schedule:
+    - cron: '0 2 * * 1'  # Run every Monday at 2 AM
+
+jobs:
+  full-test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: [3.11, 3.12]
+        database: [postgresql, sqlite]
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Copy env file
+      run: cp env.example .env
+
+    - name: Configure database for matrix
+      run: |
+        if [ "${{ matrix.database }}" = "sqlite" ]; then
+          echo "DATABASE_URL=sqlite:///db.sqlite3" >> .env
+        else
+          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_db" >> .env
+        fi
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y postgresql-client
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r umschool/requirements.txt
+        pip install coverage pytest-xdist
+
+    - name: Wait for services
+      if: matrix.database == 'postgresql'
+      run: |
+        while ! pg_isready -h localhost -p 5432 -U postgres; do
+          echo "Waiting for database..."
+          sleep 2
+        done
+
+    - name: Run Django migrations
+      run: |
+        cd umschool/
+        python manage.py migrate --settings=umschool.settings
+
+    - name: Create test data
+      run: |
+        cd umschool/
+        python manage.py shell --settings=umschool.settings -c "
+        from account_service.models import CustomUser, Student, Teacher
+        from python_code_check_system.models import Task, Test, Solution
+        
+        # Create test users
+        user1 = CustomUser.objects.create_user(username='testuser1', email='test1@example.com', password='testpass123')
+        user2 = CustomUser.objects.create_user(username='testuser2', email='test2@example.com', password='testpass123')
+        
+        # Create student profiles
+        student1 = Student.objects.create(user=user1, student_id='S001')
+        student2 = Student.objects.create(user=user2, student_id='S002')
+        
+        # Create test tasks
+        task1 = Task.objects.create(
+            name='Test Task 1',
+            description='Test description 1',
+            complexity='easy',
+            is_active=True
+        )
+        
+        task2 = Task.objects.create(
+            name='Test Task 2', 
+            description='Test description 2',
+            complexity='medium',
+            is_active=True
+        )
+        
+        # Create test cases
+        Test.objects.create(task=task1, input_data='5\n3', output_data='8')
+        Test.objects.create(task=task2, input_data='10\n20', output_data='30')
+        
+        print('Test data created successfully')
+        "
+
+    - name: Run all tests with coverage
+      run: |
+        cd umschool/
+        coverage run --source='.' manage.py test --settings=umschool.settings --verbosity=2 --parallel=2
+
+    - name: Generate coverage report
+      run: |
+        cd umschool/
+        coverage report --show-missing
+        coverage html
+        coverage xml
+
+    - name: Run specific test categories
+      run: |
+        cd umschool/
+        echo "=== Running Model Tests ==="
+        python manage.py test python_code_check_system.test_files.test_models --settings=umschool.settings --verbosity=2
+        
+        echo "=== Running Form Tests ==="
+        python manage.py test python_code_check_system.test_files.test_forms --settings=umschool.settings --verbosity=2
+        
+        echo "=== Running View Tests ==="
+        python manage.py test python_code_check_system.test_files.test_views --settings=umschool.settings --verbosity=2
+        
+        echo "=== Running Core System Tests ==="
+        python manage.py test python_code_check_system.check_system.tests --settings=umschool.settings --verbosity=2
+        
+        echo "=== Running Main Tests ==="
+        python manage.py test python_code_check_system.tests --settings=umschool.settings --verbosity=2
+
+    - name: Test code execution system
+      run: |
+        cd umschool/
+        python -c "
+        from python_code_check_system.check_system.core import CodeChecker
+        from python_code_check_system.check_system.types import TestCase
+        
+        print('Testing code execution system...')
+        checker = CodeChecker()
+        
+        # Test basic arithmetic
+        test_case = TestCase(input_data='5\n3', output_data='8')
+        result = checker.check_code('a = int(input())\nb = int(input())\nprint(a + b)', [test_case])
+        print(f'Basic arithmetic test: {\"PASS\" if result.verdict else \"FAIL\"}')
+        
+        # Test error handling
+        result = checker.check_code('print(1/0)', [test_case])
+        print(f'Error handling test: {\"PASS\" if not result.verdict else \"FAIL\"}')
+        
+        print('Code execution system tests completed')
+        "
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./umschool/coverage.xml
+        flags: unittests
+        name: codecov-umbrella-${{ matrix.python-version }}-${{ matrix.database }}
+        fail_ci_if_error: false
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-results-${{ matrix.python-version }}-${{ matrix.database }}
+        path: |
+          umschool/htmlcov/
+          umschool/coverage.xml

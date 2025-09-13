@@ -21,9 +21,7 @@ class TaskHomeListView(ListView):
 
     def get(self, request, *args, **kwargs):
         tasks = Task.objects.all()
-        return render(
-            request, 'python_code_check_system/tasks.html', {'all_tasks': tasks}
-        )
+        return render(request, 'python_code_check_system/tasks.html', {'all_tasks': tasks})
 
 
 class StudentHomeListView(ListView):
