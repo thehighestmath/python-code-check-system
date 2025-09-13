@@ -1,11 +1,10 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.views import LoginView
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, render
 from django.views import View
-from django.views.generic import CreateView
-from django.views.generic import TemplateView
+from django.views.generic import CreateView, TemplateView
 
-from .forms import LoginForm, StudentSignUpForm, TeacherSignUpForm, StudentViewForm, TeacherViewForm, BaseViewForm
+from .forms import BaseViewForm, LoginForm, StudentSignUpForm, StudentViewForm, TeacherSignUpForm, TeacherViewForm
 from .models import CustomUser, Student, Teacher
 
 
@@ -31,10 +30,22 @@ class ProfileView(View):
             base_form = BaseViewForm(instance=request.user)
             advanced_form = None
 
-        return render(request, 'account_service/profile.html', {
-            'base_form': base_form,
-            'advanced_form': advanced_form,
-        })
+        return render(
+            request,
+            'account_service/profile.html',
+            {
+                'base_form': base_form,
+                'advanced_form': advanced_form,
+            },
+        )
+
+
+class CustomLogoutView(View):
+    """Кастомный logout view, который работает с GET запросами."""
+
+    def get(self, request):
+        logout(request)
+        return redirect('home')
 
 
 class SignUpView(TemplateView):

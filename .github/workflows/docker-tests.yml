@@ -1,0 +1,92 @@
+name: Docker Tests
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  docker-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Copy env file and configure for SQLite
+      run: |
+        cp env.example .env
+        echo "DATABASE_URL=sqlite:///db.sqlite3" >> .env
+        echo "DEBUG=True" >> .env
+
+    - name: Build Docker images
+      run: |
+        docker compose build --no-cache
+
+    - name: Start services (without PostgreSQL)
+      run: |
+        docker compose -f docker-compose.test.yml up -d
+        
+    - name: Check container status and logs
+      run: |
+        echo "Container status:"
+        docker compose -f docker-compose.test.yml ps
+        echo "Server logs:"
+        docker compose -f docker-compose.test.yml logs server --tail=20
+
+    - name: Wait for services to be ready
+      run: |
+        echo "Waiting for services to be ready..."
+        timeout 60 bash -c 'until docker compose -f docker-compose.test.yml exec -T server python manage.py check > /dev/null 2>&1; do 
+          echo "Still waiting... checking container status:"
+          docker compose -f docker-compose.test.yml ps
+          sleep 5
+        done'
+        echo "Services are ready!"
+
+    - name: Run database migrations
+      run: |
+        docker compose -f docker-compose.test.yml exec -T server python manage.py migrate
+
+    - name: Run Django tests in Docker
+      run: |
+        docker compose -f docker-compose.test.yml exec -T server python manage.py test --verbosity=2
+
+    - name: Run specific test suites
+      run: |
+        echo "Running model tests..."
+        docker compose -f docker-compose.test.yml exec -T server python manage.py test python_code_check_system.test_files.test_models --verbosity=2
+        
+        echo "Running form tests..."
+        docker compose -f docker-compose.test.yml exec -T server python manage.py test python_code_check_system.test_files.test_forms --verbosity=2
+        
+        echo "Running view tests..."
+        docker compose -f docker-compose.test.yml exec -T server python manage.py test python_code_check_system.test_files.test_views --verbosity=2
+        
+        echo "Running core system tests..."
+        docker compose -f docker-compose.test.yml exec -T server python manage.py test python_code_check_system.check_system.tests --verbosity=2
+
+    - name: Test API endpoints
+      run: |
+        echo "Testing API endpoints..."
+        curl -f http://localhost:80/ || echo "Home page test failed"
+        curl -f http://localhost:80/accounts/login/ || echo "Login page test failed"
+        curl -f http://localhost:80/tasks/ || echo "Tasks page test failed"
+
+    - name: Check service health
+      run: |
+        echo "Checking service health..."
+        docker compose -f docker-compose.test.yml ps
+        docker compose -f docker-compose.test.yml logs server --tail=50
+        docker compose -f docker-compose.test.yml logs redis --tail=20
+
+    - name: Cleanup
+      if: always()
+      run: |
+        docker compose -f docker-compose.test.yml down -v

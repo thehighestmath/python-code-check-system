@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import sys
 from os import environ
 from pathlib import Path
 
@@ -21,14 +22,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$xts=dax7#nn8opswt=k+tg^@3g)fs)4*%=y(_j^d+dz_(8k(-'
+SECRET_KEY = environ.get('SECRET_KEY', 'django-insecure-$xts=dax7#nn8opswt=k+tg^@3g)fs)4*%=y(_j^d+dz_(8k(-')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = environ.get('DEBUG', 'True').lower() == 'true'
 
-# TODO: remove '*' in production mode
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '*']
+# Security: restrict allowed hosts
+ALLOWED_HOSTS = environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0').split(',')
 
+# Security settings
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
 
 # Application definition
 
@@ -80,20 +88,38 @@ WSGI_APPLICATION = 'umschool.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': environ.get('POSTGRES_DB', 'postgres'),
-        'USER': environ.get('POSTGRES_USER', 'postgres'),
-        'PASSWORD': environ.get('POSTGRES_PASSWORD', 'postgres'),
-        'HOST': environ.get('POSTGRES_HOST', 'pgdb'),
-        'PORT': '5432',
-    },
-    # "default": {
-    #     "ENGINE": "django.db.backends.sqlite3",
-    #     "NAME": "db.sqlite3",
-    # }
-}
+# Database configuration
+# Support both DATABASE_URL and individual environment variables
+DATABASE_URL = environ.get('DATABASE_URL')
+
+# Debug: print DATABASE_URL in development
+if DEBUG:
+    print(f"DATABASE_URL: {DATABASE_URL}")
+
+if DATABASE_URL and DATABASE_URL.startswith('sqlite'):
+    # Use SQLite for tests and development
+    # Use /tmp directory for database file to avoid permission issues
+    db_path = DATABASE_URL.replace('sqlite:///', '')
+    if db_path == 'db.sqlite3':
+        db_path = '/tmp/db.sqlite3'
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': db_path,
+        }
+    }
+else:
+    # Default PostgreSQL configuration for production
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': environ.get('POSTGRES_DB', 'postgres'),
+            'USER': environ.get('POSTGRES_USER', 'postgres'),
+            'PASSWORD': environ.get('POSTGRES_PASSWORD', 'postgres'),
+            'HOST': environ.get('POSTGRES_HOST', 'pgdb'),
+            'PORT': '5432',
+        }
+    }
 
 
 # Password validation
@@ -132,6 +158,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
@@ -155,3 +183,25 @@ CELERY_RESULT_SERIALIZER = 'json'
 AUTH_USER_MODEL = "account_service.CustomUser"
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+# Cache configuration
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': environ.get('REDIS_URI', 'redis://redis:6379/1'),
+        'KEY_PREFIX': 'python_code_check',
+        'TIMEOUT': 300,  # 5 minutes
+    }
+}
+
+# Session configuration
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
+
+# Настройки авторизации
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+# Тестовое окружение
+TESTING = 'test' in sys.argv

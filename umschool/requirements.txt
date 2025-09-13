@@ -1,10 +1,23 @@
-pytest==7.4.3
-pytest-timeout==2.3.1
-django==5.0.9
-celery==5.3.6
+# Core Django
+django==5.1.4
+psycopg2-binary==2.9.10
+
+# Celery and Redis
+celery==5.4.0
 redis==5.0.1
 flower==2.0.1
+
+# System monitoring
 psutil==5.9.8
-psycopg2-binary==2.9.9
+
+# Forms
 django-crispy-forms==2.1
 crispy-bootstrap4==2024.1
+
+# Testing
+pytest==8.3.4
+pytest-timeout==2.3.1
+
+# Additional utilities
+gunicorn==22.0.0
+whitenoise==6.6.0

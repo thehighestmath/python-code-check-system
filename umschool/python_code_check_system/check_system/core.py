@@ -1,11 +1,12 @@
+import os
 import re
 import shutil
 import subprocess
 import time
-import os
 from pathlib import Path
 
 import psutil
+
 from python_code_check_system.check_system.types import CheckResult, DataInOut
 
 
@@ -26,7 +27,7 @@ def read_file(filepath: str) -> str:
 def are_file_the_same(filepath_1: str, filepath_2: str) -> bool:
     data1 = read_file(filepath_1)
     data2 = read_file(filepath_2)
-    return data1.strip() == data2.strip() # TODO: fix .strip()
+    return data1.strip() == data2.strip()  # TODO: fix .strip()
 
 
 def check_forbidden_function_call(filepath: str) -> str:
@@ -36,8 +37,8 @@ def check_forbidden_function_call(filepath: str) -> str:
 
 def check_memory(proc: subprocess.Popen) -> bool:
     # TODO: these params must be specified with task
-    MEMORY_LIMIT = 100 * 1024 * 1024 # pylint: disable=invalid-name # 100MB
-    TIME_LIMIT = 1 # pylint: disable=invalid-name
+    MEMORY_LIMIT = 100 * 1024 * 1024  # pylint: disable=invalid-name # 100MB
+    TIME_LIMIT = 1  # pylint: disable=invalid-name
     start_time = time.time()
     while True:
         current_time = time.time()
@@ -89,7 +90,7 @@ def check(filepath: str, tests: list[DataInOut]) -> CheckResult:
         )
 
     results = []
-    base_dir = f'./data-{abs(hash(new_filepath))}'
+    base_dir = f'/tmp/data-{abs(hash(new_filepath))}'
     Path(base_dir).mkdir(exist_ok=True)
     error = ''
     for i, test in enumerate(tests):

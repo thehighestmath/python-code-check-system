@@ -15,14 +15,31 @@
         <img src = "{% static 'python_code_check_system/img/umschool_logotype.png'%}" alt = "Логотип">
         <h3>Навигация</h3>
         <div class="circle">
+            {% if user.is_authenticated %}
                 <a href="{% url 'profile' %}"> <img src="{% static 'python_code_check_system/img/user_photo.png'%}" alt="user_photo"> </a>
+            {% else %}
+                <a href="{% url 'account_service:login' %}"> <img src="{% static 'python_code_check_system/img/user_photo.png'%}" alt="user_photo"> </a>
+            {% endif %}
         </div>
         <ul>
             <a href = "{% url 'home' %}"><li><i class="fa-solid fa-house-chimney"></i> Главная</li></a>
             <a href = "{% url 'tasks' %}"><li><i class="fa-solid fa-thumbtack"></i> Задания</li></a>
+            {% if user.is_authenticated %}
+                <a href = "{% url 'solutions' %}"><li><i class="fa-solid fa-code"></i> Мои решения</li></a>
+            {% endif %}
             <a href = "{% url 'about' %}"><li><i class="fa-solid fa-address-card"></i> О нас</li></a>
             <a href = "{% url 'contacts' %}"><li><i class="fa-solid fa-paper-plane"></i> Контакты</li></a>
         </ul>
+        
+        <div class="auth-links">
+            {% if user.is_authenticated %}
+                <p>Привет, {{ user.username }}!</p>
+                <a href="{% url 'account_service:logout' %}" class="btn btn-outline-danger btn-sm">Выйти</a>
+            {% else %}
+                <a href="{% url 'account_service:login' %}" class="btn btn-primary btn-sm">Войти</a>
+                <a href="{% url 'account_service:signup' %}" class="btn btn-outline-primary btn-sm">Регистрация</a>
+            {% endif %}
+        </div>
     </aside>
     <main>
         {% block content %}
