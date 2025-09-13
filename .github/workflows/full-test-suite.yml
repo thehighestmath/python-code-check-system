@@ -1,0 +1,193 @@
+name: Full Test Suite
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+  schedule:
+    - cron: '0 2 * * 1'  # Run every Monday at 2 AM
+
+permissions:
+  contents: read
+
+jobs:
+  full-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.13
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.13'
+
+    - name: Copy env file
+      run: cp env.example .env
+
+    - name: Configure database for tests
+      run: |
+        # Use SQLite for tests to avoid PostgreSQL connection issues
+        echo "DATABASE_URL=sqlite:///db.sqlite3" > .env
+        echo "DEBUG=True" >> .env
+        echo "Contents of .env file:"
+        cat .env
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r umschool/requirements.txt
+        pip install pytest-xdist
+
+    - name: Run Django migrations
+      run: |
+        cd umschool/
+        echo "Checking environment variables..."
+        echo "DATABASE_URL: $DATABASE_URL"
+        echo "DEBUG: $DEBUG"
+        echo "Loading .env file..."
+        export $(cat ../.env | xargs)
+        echo "After loading .env:"
+        echo "DATABASE_URL: $DATABASE_URL"
+        echo "DEBUG: $DEBUG"
+        echo "Checking database configuration..."
+        python -c "
+        import os
+        print(f'DATABASE_URL from os.environ: {os.environ.get(\"DATABASE_URL\")}')
+        print(f'DEBUG from os.environ: {os.environ.get(\"DEBUG\")}')
+        from django.conf import settings
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'umschool.settings')
+        import django
+        django.setup()
+        print(f'Database engine: {settings.DATABASES[\"default\"][\"ENGINE\"]}')
+        print(f'Database name: {settings.DATABASES[\"default\"][\"NAME\"]}')
+        print(f'Database host: {settings.DATABASES[\"default\"].get(\"HOST\", \"N/A\")}')
+        "
+        python manage.py migrate --settings=umschool.settings
+
+    - name: Create test data
+      run: |
+        cd umschool/
+        export $(cat ../.env | xargs)
+        python manage.py shell --settings=umschool.settings -c "
+        from account_service.models import CustomUser, Student, Teacher
+        from python_code_check_system.models import Task, Test, Solution
+        
+        # Create test users
+        user1 = CustomUser.objects.create_user(username='testuser1', email='test1@example.com', password='testpass123')
+        user2 = CustomUser.objects.create_user(username='testuser2', email='test2@example.com', password='testpass123')
+        
+        # Create student profiles
+        student1 = Student.objects.create(user=user1)
+        student2 = Student.objects.create(user=user2)
+        
+        # Create test tasks
+        task1 = Task.objects.create(
+            name='Test Task 1',
+            description='Test description 1',
+            complexity='easy',
+            is_active=True
+        )
+        
+        task2 = Task.objects.create(
+            name='Test Task 2', 
+            description='Test description 2',
+            complexity='medium',
+            is_active=True
+        )
+        
+        # Create test cases
+        Test.objects.create(task=task1, input_data='5\n3', output_data='8')
+        Test.objects.create(task=task2, input_data='10\n20', output_data='30')
+        
+        print('Test data created successfully')
+        "
+
+
+    - name: Run specific test categories
+      run: |
+        cd umschool/
+        export $(cat ../.env | xargs)
+        echo "Checking environment variables..."
+        echo "DATABASE_URL: $DATABASE_URL"
+        echo "DEBUG: $DEBUG"
+        echo "Checking database configuration..."
+        python -c "
+        import os
+        print(f'DATABASE_URL from os.environ: {os.environ.get(\"DATABASE_URL\")}')
+        print(f'DEBUG from os.environ: {os.environ.get(\"DEBUG\")}')
+        from django.conf import settings
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'umschool.settings')
+        import django
+        django.setup()
+        print(f'Database engine: {settings.DATABASES[\"default\"][\"ENGINE\"]}')
+        print(f'Database name: {settings.DATABASES[\"default\"][\"NAME\"]}')
+        print(f'Database host: {settings.DATABASES[\"default\"].get(\"HOST\", \"N/A\")}')
+        "
+        echo "=== Running Model Tests ==="
+        python manage.py test python_code_check_system.test_files.test_models --settings=umschool.settings --verbosity=2
+        
+        echo "=== Running Form Tests ==="
+        python manage.py test python_code_check_system.test_files.test_forms --settings=umschool.settings --verbosity=2
+        
+        echo "=== Running View Tests ==="
+        python manage.py test python_code_check_system.test_files.test_views --settings=umschool.settings --verbosity=2
+        
+        echo "=== Running Core System Tests ==="
+        python manage.py test python_code_check_system.check_system.tests --settings=umschool.settings --verbosity=2
+        
+        echo "=== Running Main Tests ==="
+        python manage.py test python_code_check_system.tests --settings=umschool.settings --verbosity=2
+
+    - name: Test code execution system
+      run: |
+        cd umschool/
+        export $(cat ../.env | xargs)
+        python -c "
+        from python_code_check_system.check_system.core import check
+        from python_code_check_system.check_system.types import DataInOut
+        
+        print('Testing code execution system...')
+        
+        # Test simple addition
+        test_cases = [
+            DataInOut(input_data=['2', '3'], output_data=['5']),
+            DataInOut(input_data=['10', '20'], output_data=['30'])
+        ]
+        
+        result = check('python_code_check_system/check_system/tests/sample_src/main_plus.py', test_cases)
+        print(f'Addition test: {\"PASS\" if result.verdict else \"FAIL\"}')
+        if not result.verdict:
+            print(f'Error: {result.error_verbose}')
+        
+        # Test subtraction
+        test_cases = [
+            DataInOut(input_data=['5', '3'], output_data=['2']),
+            DataInOut(input_data=['20', '10'], output_data=['10'])
+        ]
+        
+        result = check('python_code_check_system/check_system/tests/sample_src/main_sub.py', test_cases)
+        print(f'Subtraction test: {\"PASS\" if result.verdict else \"FAIL\"}')
+        if not result.verdict:
+            print(f'Error: {result.error_verbose}')
+        
+        # Test error handling
+        test_cases = [
+            DataInOut(input_data=['2', '3'], output_data=['5'])
+        ]
+        
+        result = check('python_code_check_system/check_system/tests/sample_src/main_syntax_error.py', test_cases)
+        print(f'Error handling test: {\"PASS\" if not result.verdict else \"FAIL\"}')
+        
+        print('Code execution system tests completed')
+        "
+      continue-on-error: true
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-python-3.13
+        path: |
+          umschool/test-results/

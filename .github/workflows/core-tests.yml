@@ -1,36 +1,88 @@
-name: Core tests
+name: Core System Tests
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "main" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "main" ]
 
 permissions:
   contents: read
 
 jobs:
-  build:
-
+  core-tests:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v3
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.13
+      uses: actions/setup-python@v4
       with:
-        python-version: "3.12"
+        python-version: "3.13"
+    
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pytest
         pip install -r umschool/requirements.txt
-    - name: Test stdin/stdout
+    
+    - name: Test stdin/stdout functionality
       run: |
         cd umschool/
-        pytest python_code_check_system/check_system/tests/test_stdin_stdout.py
+        pytest python_code_check_system/check_system/tests/test_stdin_stdout.py -v
 
-    - name: Test class
+    - name: Test class functionality
       run: |
         cd umschool/
-        pytest python_code_check_system/check_system/tests/test_class.py
+        pytest python_code_check_system/check_system/tests/test_class.py -v
+
+    - name: Check memory example syntax
+      run: |
+        python -m py_compile poc/memory.py
+
+    - name: Check timeout example syntax
+      run: |
+        python -m py_compile poc/timeout.py
+
+    - name: Test core system integration
+      run: |
+        cd umschool/
+        python -c "
+        from python_code_check_system.check_system.core import check
+        from python_code_check_system.check_system.types import DataInOut
+        
+        print('Testing code execution system...')
+        
+        # Test simple addition
+        test_cases = [
+            DataInOut(input_data=['2', '3'], output_data=['5']),
+            DataInOut(input_data=['10', '20'], output_data=['30'])
+        ]
+        
+        result = check('python_code_check_system/check_system/tests/sample_src/main_plus.py', test_cases)
+        print(f'Addition test: {\"PASS\" if result.verdict else \"FAIL\"}')
+        if not result.verdict:
+            print(f'Error: {result.error_verbose}')
+        
+        # Test subtraction
+        test_cases = [
+            DataInOut(input_data=['5', '3'], output_data=['2']),
+            DataInOut(input_data=['20', '10'], output_data=['10'])
+        ]
+        
+        result = check('python_code_check_system/check_system/tests/sample_src/main_sub.py', test_cases)
+        print(f'Subtraction test: {\"PASS\" if result.verdict else \"FAIL\"}')
+        if not result.verdict:
+            print(f'Error: {result.error_verbose}')
+        
+        # Test error handling
+        test_cases = [
+            DataInOut(input_data=['2', '3'], output_data=['5'])
+        ]
+        
+        result = check('python_code_check_system/check_system/tests/sample_src/main_syntax_error.py', test_cases)
+        print(f'Error handling test: {\"PASS\" if not result.verdict else \"FAIL\"}')
+        
+        print('Code execution system tests completed')
+        "

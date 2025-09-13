@@ -1,0 +1,134 @@
+{% extends 'python_code_check_system/base.html' %}
+
+{% block title %} {{ solution.task.name }} - Решение {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>
+                    <i class="fas fa-code"></i> Решение для "{{ solution.task.name }}"
+                </h1>
+                <div>
+                    <a href="{% url 'solutions' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Назад к решениям
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-file-code"></i> Код решения
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <pre class="bg-light p-3" style="max-height: 500px; overflow-y: auto;"><code>{{ solution.source_code }}</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-info-circle"></i> Информация
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <strong>Статус:</strong>
+                                <span class="badge badge-{% if solution.is_accepted %}success{% else %}danger{% endif %} ml-2">
+                                    {% if solution.is_accepted %}
+                                        ✓ Принято
+                                    {% else %}
+                                        ✗ Отклонено
+                                    {% endif %}
+                                </span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong>Задание:</strong><br>
+                                <a href="{% url 'task-detail' solution.task.id %}" class="text-decoration-none">
+                                    {{ solution.task.name }}
+                                </a>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong>Сложность:</strong>
+                                <span class="badge badge-info ml-2">
+                                    {{ solution.task.get_complexity_display }}
+                                </span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong>Создано:</strong><br>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar"></i> {{ solution.created_at|date:"d.m.Y H:i" }}
+                                </small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong>Обновлено:</strong><br>
+                                <small class="text-muted">
+                                    <i class="fas fa-clock"></i> {{ solution.updated_at|date:"d.m.Y H:i" }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if solution.error_message %}
+                        <div class="card mt-3">
+                            <div class="card-header bg-danger text-white">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-exclamation-triangle"></i> Ошибка
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert alert-danger">
+                                    {{ solution.error_message|linebreaks }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-tasks"></i> Описание задания
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p>{{ solution.task.description|linebreaks }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+pre code {
+    font-size: 14px;
+    line-height: 1.4;
+}
+.card {
+    transition: transform 0.2s;
+}
+.card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.badge {
+    font-size: 0.8em;
+}
+</style>
+{% endblock %}

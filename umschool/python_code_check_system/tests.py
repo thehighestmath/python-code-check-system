@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-
 from django.test import TestCase
 
 from account_service.models import Student
@@ -16,11 +15,11 @@ class SolutionTestCase(TestCase):
         )
 
     def test_sub_two_numbers(self):
-        user = get_user_model().objects.create_user(
-            "foo", password="bar", is_student=True
-        )
+        user = get_user_model().objects.create_user("foo", password="bar", is_student=True)
         student = Student.objects.create(user=user)
-        task = Task.objects.create(name="Test task", complexity="1", description="")
+        task = Task.objects.create(
+            name="Test task", complexity="easy", description="Test description for subtraction task"
+        )
         Test.objects.create(task=task, input_data="5\n2", output_data="3")
         solution = Solution.objects.create(
             student=student,

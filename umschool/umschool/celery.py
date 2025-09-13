@@ -2,7 +2,6 @@ import os
 
 from celery import Celery
 
-
 REDIS_URI = os.environ.get('REDIS_URI', "redis://localhost:6379/0")
 
 # Set the default Django settings module for the 'celery' program.

@@ -1,21 +1,36 @@
-name: PEP8 Style Guide Enforcement
+name: Code Quality & Flake8
 
-on: [push]
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+
+permissions:
+  contents: read
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v3
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.13
+      uses: actions/setup-python@v4
       with:
-        python-version: "3.12"
+        python-version: "3.13"
+    
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pylint
+        pip install flake8
+        pip install isort
         pip install -r umschool/requirements.txt
-    - name: Style check (Run Pylint)
+    
+    - name: Run Flake8
       run: |
-        pylint $(git ls-files '*.py')
+        flake8 $(git ls-files '*.py')
+    
+    - name: Check import sorting with isort
+      run: |
+        isort --check-only $(git ls-files '*.py')

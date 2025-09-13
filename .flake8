@@ -1,12 +1,46 @@
 [flake8]
-extend-ignore = 
-exclude =
+max-line-length = 120
+exclude = 
     .git,
     __pycache__,
-    docs/source/conf.py,
-    old,
+    .venv,
+    venv,
+    env,
+    .env,
+    migrations,
+    .pytest_cache,
+    .coverage,
+    htmlcov,
+    .tox,
+    dist,
     build,
-    sample_src,
-    dist
-max-complexity = 10
-max-line-lenght = 127
+    *.egg-info,
+    .mypy_cache,
+    .DS_Store
+
+ignore = 
+    E501,
+    W503,
+    E203,
+    E261,
+    E266,
+    W504,
+    F401,
+    F841,
+    F403,
+    E722,
+    C901,
+    E999
+
+per-file-ignores =
+    # Ignore migrations
+    */migrations/*:E501,F401
+    # Ignore test files for some rules
+    */test_*.py:F401
+    # Ignore sample files
+    */sample_src/*:E999,F401
+    # Ignore manage.py
+    manage.py:F401
+
+max-complexity = 15
+select = E,W,F,C

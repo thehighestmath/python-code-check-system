@@ -3,7 +3,33 @@
 {% block title %} Главная страница {% endblock %}
 
 {% block content %}
-    <h1>Главная страница</h1>
-     <p>Главная страница</p>
+    <div class="jumbotron">
+        <h1 class="display-4">Система проверки Python кода</h1>
+        <p class="lead">Добро пожаловать в систему для проверки решений задач по программированию на Python!</p>
+        
+        {% if user.is_authenticated %}
+            <p>Привет, {{ user.username }}! Вы можете просматривать задания и отправлять свои решения.</p>
+            <a class="btn btn-primary btn-lg" href="{% url 'tasks' %}" role="button">Перейти к заданиям</a>
+        {% else %}
+            <p>Для начала работы необходимо войти в систему или зарегистрироваться.</p>
+            <a class="btn btn-primary btn-lg" href="{% url 'account_service:login' %}" role="button">Войти</a>
+            <a class="btn btn-outline-primary btn-lg" href="{% url 'account_service:signup' %}" role="button">Регистрация</a>
+        {% endif %}
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <h3>Задания</h3>
+            <p>Просматривайте доступные задания различной сложности и отправляйте свои решения.</p>
+        </div>
+        <div class="col-md-4">
+            <h3>Проверка кода</h3>
+            <p>Автоматическая проверка ваших решений с помощью тестовых случаев.</p>
+        </div>
+        <div class="col-md-4">
+            <h3>Прогресс</h3>
+            <p>Отслеживайте свой прогресс и просматривайте историю решений.</p>
+        </div>
+    </div>
 {% endblock %}
 
