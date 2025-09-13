@@ -30,6 +30,8 @@ class TaskHomeListViewTest(TestCase):
             username='testuser', email='test@example.com', password='testpass123', is_student=True
         )
         self.task = Task.objects.create(name='Test Task', complexity='easy', description='Test description')
+        # Создаем тест для задания
+        Test.objects.create(task=self.task, input_data='5\n3', output_data='8')
 
     def test_anonymous_user_redirected(self):
         """Тест перенаправления анонимного пользователя."""
@@ -76,6 +78,8 @@ class AddSolutionViewTest(TestCase):
         )
         self.student = Student.objects.create(user=self.user)
         self.task = Task.objects.create(name='Test Task', complexity='easy', description='Test description')
+        # Создаем тест для задания
+        Test.objects.create(task=self.task, input_data='5\n3', output_data='8')
 
     def test_anonymous_user_redirected(self):
         """Тест перенаправления анонимного пользователя."""
@@ -93,12 +97,14 @@ class AddSolutionViewTest(TestCase):
     def test_solution_submission(self):
         """Тест отправки решения."""
         self.client.login(username='testuser', password='testpass123')
+        # Создаем студента
+        student, created = Student.objects.get_or_create(user=self.user)
         data = {'source_code': 'print("Hello, World!")\nprint("This is a test solution")', 'task': self.task.id}
         response = self.client.post(reverse('solutions-add'), data)
         self.assertIn(response.status_code, [301, 302])  # Перенаправление после успешной отправки
 
         # Проверяем, что решение создано
-        solution = Solution.objects.filter(student=self.student, task=self.task).first()
+        solution = Solution.objects.filter(student=student, task=self.task).first()
         self.assertIsNotNone(solution)
         self.assertIn('Hello, World!', solution.source_code)
 

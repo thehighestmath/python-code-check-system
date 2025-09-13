@@ -4,7 +4,7 @@
 """
 
 import os
-from .settings import *
+from umschool.settings import *
 
 # Переопределяем настройки для тестирования
 DEBUG = True

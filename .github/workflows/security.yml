@@ -8,6 +8,9 @@ on:
   schedule:
     - cron: '0 3 * * 1'  # Run every Monday at 3 AM
 
+permissions:
+  contents: read
+
 jobs:
   security-scan:
     runs-on: ubuntu-latest
