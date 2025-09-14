@@ -144,19 +144,39 @@ jobs:
         cd umschool/
         export $(cat ../.env | xargs)
         python -c "
-        from python_code_check_system.check_system.core import CodeChecker
-        from python_code_check_system.check_system.types import TestCase
+        from python_code_check_system.check_system.core import check
+        from python_code_check_system.check_system.types import DataInOut
         
         print('Testing code execution system...')
-        checker = CodeChecker()
         
-        # Test basic arithmetic
-        test_case = TestCase(input_data='5\n3', output_data='8')
-        result = checker.check_code('a = int(input())\nb = int(input())\nprint(a + b)', [test_case])
-        print(f'Basic arithmetic test: {\"PASS\" if result.verdict else \"FAIL\"}')
+        # Test simple addition
+        test_cases = [
+            DataInOut(input_data=['2', '3'], output_data=['5']),
+            DataInOut(input_data=['10', '20'], output_data=['30'])
+        ]
+        
+        result = check('python_code_check_system/check_system/tests/sample_src/main_plus.py', test_cases)
+        print(f'Addition test: {\"PASS\" if result.verdict else \"FAIL\"}')
+        if not result.verdict:
+            print(f'Error: {result.error_verbose}')
+        
+        # Test subtraction
+        test_cases = [
+            DataInOut(input_data=['5', '3'], output_data=['2']),
+            DataInOut(input_data=['20', '10'], output_data=['10'])
+        ]
+        
+        result = check('python_code_check_system/check_system/tests/sample_src/main_sub.py', test_cases)
+        print(f'Subtraction test: {\"PASS\" if result.verdict else \"FAIL\"}')
+        if not result.verdict:
+            print(f'Error: {result.error_verbose}')
         
         # Test error handling
-        result = checker.check_code('print(1/0)', [test_case])
+        test_cases = [
+            DataInOut(input_data=['2', '3'], output_data=['5'])
+        ]
+        
+        result = check('python_code_check_system/check_system/tests/sample_src/main_syntax_error.py', test_cases)
         print(f'Error handling test: {\"PASS\" if not result.verdict else \"FAIL\"}')
         
         print('Code execution system tests completed')
