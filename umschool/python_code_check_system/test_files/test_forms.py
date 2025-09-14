@@ -5,8 +5,9 @@ Tests for forms.
 from django.test import TestCase
 
 from account_service.models import CustomUser, Student
+
+from ..forms import SolutionForm, TaskForm
 from ..models import Task
-from ..forms import TaskForm, SolutionForm
 
 
 class TaskFormTest(TestCase):

@@ -1,15 +1,16 @@
-from pathlib import Path
-from time import sleep
 import logging
 import os
+from pathlib import Path
+from time import sleep
 
 from celery import shared_task
+
 from django.core.exceptions import ObjectDoesNotExist
 
 from .check_system.core import check
 from .check_system.types import DataInOut
+from .exceptions import CodeExecutionError, SolutionNotFoundError, TaskNotFoundError
 from .models import Solution, Test
-from .exceptions import SolutionNotFoundError, TaskNotFoundError, CodeExecutionError
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 logger = logging.getLogger(__name__)

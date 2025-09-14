@@ -1,6 +1,6 @@
-from django.db import models
 from django.core.exceptions import ValidationError
-from django.core.validators import MinLengthValidator, MaxLengthValidator
+from django.core.validators import MaxLengthValidator, MinLengthValidator
+from django.db import models
 
 from account_service.models import Student
 

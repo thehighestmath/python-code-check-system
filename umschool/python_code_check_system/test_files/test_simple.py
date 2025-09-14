@@ -2,12 +2,13 @@
 Simple tests without cache dependencies.
 """
 
-from django.test import TestCase, override_settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.test import TestCase, override_settings
 
 from account_service.models import Student
-from ..models import Task, Solution
+
+from ..models import Solution, Task
 
 User = get_user_model()
 

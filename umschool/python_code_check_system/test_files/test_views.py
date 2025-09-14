@@ -2,12 +2,13 @@
 Tests for views.
 """
 
-from django.test import TestCase, Client, override_settings
-from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.test import Client, TestCase, override_settings
+from django.urls import reverse
 
 from account_service.models import Student
-from ..models import Task, Solution, Test
+
+from ..models import Solution, Task, Test
 
 User = get_user_model()
 

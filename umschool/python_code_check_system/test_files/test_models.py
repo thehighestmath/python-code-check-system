@@ -2,11 +2,12 @@
 Tests for models.
 """
 
-from django.test import TestCase
 from django.core.exceptions import ValidationError
+from django.test import TestCase
 
 from account_service.models import CustomUser, Student
-from ..models import Task, Solution, Test
+
+from ..models import Solution, Task, Test
 
 
 class TaskModelTest(TestCase):

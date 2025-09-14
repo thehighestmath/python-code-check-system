@@ -1,6 +1,5 @@
-from django.forms import ModelForm, Textarea, TextInput, ModelChoiceField, Select
-from django.forms import inlineformset_factory
 from django.core.exceptions import ValidationError
+from django.forms import ModelChoiceField, ModelForm, Select, Textarea, TextInput, inlineformset_factory
 
 from .models import Solution, Task, Test
 

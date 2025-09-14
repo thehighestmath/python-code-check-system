@@ -3,12 +3,11 @@ from django.urls import path
 from .views import (
     CustomLoginView,
     CustomLogoutView,
+    ProfileView,
     SignUpView,
     StudentSignUpView,
     TeacherSignUpView,
-    ProfileView,
 )
-
 
 app_name = 'account_service'  # pylint: disable=invalid-name
 

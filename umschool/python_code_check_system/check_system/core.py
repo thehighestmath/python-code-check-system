@@ -1,11 +1,12 @@
+import os
 import re
 import shutil
 import subprocess
 import time
-import os
 from pathlib import Path
 
 import psutil
+
 from python_code_check_system.check_system.types import CheckResult, DataInOut
 
 

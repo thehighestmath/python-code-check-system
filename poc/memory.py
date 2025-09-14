@@ -2,10 +2,11 @@
 https://stackoverflow.com/questions/46327566/how-to-have-pytest-place-memory-limits-on-tests
 """
 
-import resource
 import os
-import psutil
+import resource
+
 import numpy
+import psutil
 
 
 def memory_limit(max_mem):

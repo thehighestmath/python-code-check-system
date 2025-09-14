@@ -1,8 +1,8 @@
-from django.http import HttpResponseBadRequest
-from django.urls import reverse_lazy
-from django.shortcuts import render
-from django.views.generic import CreateView, DetailView, ListView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseBadRequest
+from django.shortcuts import render
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DetailView, ListView, TemplateView
 
 from .forms import SolutionForm, TaskForm, TestFormSet
 from .models import Solution, Student, Task
