@@ -98,10 +98,14 @@ if DEBUG:
 
 if DATABASE_URL and DATABASE_URL.startswith('sqlite'):
     # Use SQLite for tests and development
+    # Use /tmp directory for database file to avoid permission issues
+    db_path = DATABASE_URL.replace('sqlite:///', '')
+    if db_path == 'db.sqlite3':
+        db_path = '/tmp/db.sqlite3'
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': DATABASE_URL.replace('sqlite:///', ''),
+            'NAME': db_path,
         }
     }
 else:
