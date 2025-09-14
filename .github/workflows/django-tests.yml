@@ -99,19 +99,3 @@ jobs:
         export $(cat ../.env | xargs)
         python manage.py test python_code_check_system.tests --settings=umschool.settings --verbosity=2
 
-    - name: Test coverage
-      run: |
-        cd umschool/
-        export $(cat ../.env | xargs)
-        pip install coverage
-        coverage run --source='.' manage.py test --settings=umschool.settings
-        coverage report
-        coverage html
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        file: ./umschool/htmlcov/coverage.xml
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: false
