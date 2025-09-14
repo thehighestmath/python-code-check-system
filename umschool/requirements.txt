@@ -19,5 +19,5 @@ pytest==8.3.4
 pytest-timeout==2.3.1
 
 # Additional utilities
-gunicorn==22.0.0
+gunicorn==23.0.0
 whitenoise==6.6.0
