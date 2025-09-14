@@ -83,8 +83,8 @@ jobs:
         user2 = CustomUser.objects.create_user(username='testuser2', email='test2@example.com', password='testpass123')
         
         # Create student profiles
-        student1 = Student.objects.create(user=user1, student_id='S001')
-        student2 = Student.objects.create(user=user2, student_id='S002')
+        student1 = Student.objects.create(user=user1)
+        student2 = Student.objects.create(user=user2)
         
         # Create test tasks
         task1 = Task.objects.create(
