@@ -1,5 +1,5 @@
 # Многоэтапная сборка для оптимизации
-FROM python:3.13.1-slim as builder
+FROM python:3.13.7-slim as builder
 
 # Устанавливаем переменные окружения для сборки
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -29,7 +29,7 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # Финальный образ
-FROM python:3.13.1-slim
+FROM python:3.13.7-slim
 
 # Устанавливаем переменные окружения
 ENV PYTHONDONTWRITEBYTECODE=1 \
