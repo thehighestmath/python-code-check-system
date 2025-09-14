@@ -53,8 +53,8 @@ def check_stundet_code_task(solution_id: int):
 
         logger.info(f"Starting code check for solution {solution_id}")
 
-        # Создаем временный файл для кода
-        path = f"{BASE_DIR}/python_code_check_system/check_system/main.py"
+        # Создаем временный файл для кода в /tmp директории
+        path = "/tmp/main.py"
 
         try:
             with open(path, 'w', encoding='utf-8') as fp:
