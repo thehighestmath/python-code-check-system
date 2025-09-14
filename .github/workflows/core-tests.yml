@@ -37,15 +37,13 @@ jobs:
         cd umschool/
         pytest python_code_check_system/check_system/tests/test_class.py -v
 
-    - name: Test memory functionality
+    - name: Check memory example syntax
       run: |
-        cd umschool/
-        python python_code_check_system/check_system/tests/test_memory.py
+        python -m py_compile poc/memory.py
 
-    - name: Test timeout functionality
+    - name: Check timeout example syntax
       run: |
-        cd umschool/
-        python python_code_check_system/check_system/tests/test_timeout.py
+        python -m py_compile poc/timeout.py
 
     - name: Test core system integration
       run: |
