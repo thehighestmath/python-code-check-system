@@ -19,20 +19,23 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Copy env file
-      run: cp env.example .env
+    - name: Copy env file and configure for SQLite
+      run: |
+        cp env.example .env
+        echo "DATABASE_URL=sqlite:///db.sqlite3" >> .env
+        echo "DEBUG=True" >> .env
 
     - name: Build Docker images
       run: |
         docker compose build --no-cache
 
-    - name: Start services
+    - name: Start services (without PostgreSQL)
       run: |
-        docker compose up -d
+        docker compose up -d redis server
 
     - name: Wait for services to be ready
       run: |
-        timeout 60 bash -c 'until docker compose exec -T server python manage.py dbshell --command="SELECT 1;" > /dev/null 2>&1; do sleep 2; done'
+        timeout 30 bash -c 'until docker compose exec -T server python manage.py check --deploy > /dev/null 2>&1; do sleep 2; done'
 
     - name: Run database migrations
       run: |
@@ -69,7 +72,6 @@ jobs:
         docker compose ps
         docker compose logs server --tail=50
         docker compose logs redis --tail=20
-        docker compose logs pgdb --tail=20
 
     - name: Cleanup
       if: always()
