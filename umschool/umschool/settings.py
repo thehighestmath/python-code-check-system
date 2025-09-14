@@ -87,16 +87,43 @@ WSGI_APPLICATION = 'umschool.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': environ.get('POSTGRES_DB', 'postgres'),
-        'USER': environ.get('POSTGRES_USER', 'postgres'),
-        'PASSWORD': environ.get('POSTGRES_PASSWORD', 'postgres'),
-        'HOST': environ.get('POSTGRES_HOST', 'pgdb'),
-        'PORT': '5432',
+# Database configuration
+# Support both DATABASE_URL and individual environment variables
+DATABASE_URL = environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    # Parse DATABASE_URL (e.g., postgresql://user:pass@host:port/dbname)
+    if DATABASE_URL.startswith('sqlite'):
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': DATABASE_URL.replace('sqlite:///', ''),
+            }
+        }
+    else:
+        # For PostgreSQL URLs, we'll use the individual env vars
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': environ.get('POSTGRES_DB', 'postgres'),
+                'USER': environ.get('POSTGRES_USER', 'postgres'),
+                'PASSWORD': environ.get('POSTGRES_PASSWORD', 'postgres'),
+                'HOST': environ.get('POSTGRES_HOST', 'pgdb'),
+                'PORT': '5432',
+            }
+        }
+else:
+    # Default PostgreSQL configuration
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': environ.get('POSTGRES_DB', 'postgres'),
+            'USER': environ.get('POSTGRES_USER', 'postgres'),
+            'PASSWORD': environ.get('POSTGRES_PASSWORD', 'postgres'),
+            'HOST': environ.get('POSTGRES_HOST', 'pgdb'),
+            'PORT': '5432',
+        }
     }
-}
 
 
 # Password validation
