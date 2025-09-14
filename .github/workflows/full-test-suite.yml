@@ -34,6 +34,9 @@ jobs:
       run: |
         # Use SQLite for tests to avoid PostgreSQL connection issues
         echo "DATABASE_URL=sqlite:///db.sqlite3" > .env
+        echo "DEBUG=True" >> .env
+        echo "Contents of .env file:"
+        cat .env
 
     - name: Install Python dependencies
       run: |
@@ -44,11 +47,33 @@ jobs:
     - name: Run Django migrations
       run: |
         cd umschool/
+        echo "Checking environment variables..."
+        echo "DATABASE_URL: $DATABASE_URL"
+        echo "DEBUG: $DEBUG"
+        echo "Loading .env file..."
+        export $(cat ../.env | xargs)
+        echo "After loading .env:"
+        echo "DATABASE_URL: $DATABASE_URL"
+        echo "DEBUG: $DEBUG"
+        echo "Checking database configuration..."
+        python -c "
+        import os
+        print(f'DATABASE_URL from os.environ: {os.environ.get(\"DATABASE_URL\")}')
+        print(f'DEBUG from os.environ: {os.environ.get(\"DEBUG\")}')
+        from django.conf import settings
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'umschool.settings')
+        import django
+        django.setup()
+        print(f'Database engine: {settings.DATABASES[\"default\"][\"ENGINE\"]}')
+        print(f'Database name: {settings.DATABASES[\"default\"][\"NAME\"]}')
+        print(f'Database host: {settings.DATABASES[\"default\"].get(\"HOST\", \"N/A\")}')
+        "
         python manage.py migrate --settings=umschool.settings
 
     - name: Create test data
       run: |
         cd umschool/
+        export $(cat ../.env | xargs)
         python manage.py shell --settings=umschool.settings -c "
         from account_service.models import CustomUser, Student, Teacher
         from python_code_check_system.models import Task, Test, Solution
@@ -98,6 +123,7 @@ jobs:
     - name: Run specific test categories
       run: |
         cd umschool/
+        export $(cat ../.env | xargs)
         echo "=== Running Model Tests ==="
         python manage.py test python_code_check_system.test_files.test_models --settings=umschool.settings --verbosity=2
         
@@ -116,6 +142,7 @@ jobs:
     - name: Test code execution system
       run: |
         cd umschool/
+        export $(cat ../.env | xargs)
         python -c "
         from python_code_check_system.check_system.core import CodeChecker
         from python_code_check_system.check_system.types import TestCase

@@ -28,6 +28,9 @@ jobs:
       run: |
         # Use SQLite for tests to avoid PostgreSQL connection issues
         echo "DATABASE_URL=sqlite:///db.sqlite3" > .env
+        echo "DEBUG=True" >> .env
+        echo "Contents of .env file:"
+        cat .env
 
     - name: Install Python dependencies
       run: |
@@ -37,41 +40,69 @@ jobs:
     - name: Run Django migrations
       run: |
         cd umschool/
+        echo "Checking environment variables..."
+        echo "DATABASE_URL: $DATABASE_URL"
+        echo "DEBUG: $DEBUG"
+        echo "Loading .env file..."
+        export $(cat ../.env | xargs)
+        echo "After loading .env:"
+        echo "DATABASE_URL: $DATABASE_URL"
+        echo "DEBUG: $DEBUG"
+        echo "Checking database configuration..."
+        python -c "
+        import os
+        print(f'DATABASE_URL from os.environ: {os.environ.get(\"DATABASE_URL\")}')
+        print(f'DEBUG from os.environ: {os.environ.get(\"DEBUG\")}')
+        from django.conf import settings
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'umschool.settings')
+        import django
+        django.setup()
+        print(f'Database engine: {settings.DATABASES[\"default\"][\"ENGINE\"]}')
+        print(f'Database name: {settings.DATABASES[\"default\"][\"NAME\"]}')
+        print(f'Database host: {settings.DATABASES[\"default\"].get(\"HOST\", \"N/A\")}')
+        "
         python manage.py migrate --settings=umschool.settings
 
     - name: Run all Django tests
       run: |
         cd umschool/
+        export $(cat ../.env | xargs)
         python manage.py test --settings=umschool.settings --verbosity=2
 
     - name: Run model tests
       run: |
         cd umschool/
+        export $(cat ../.env | xargs)
         python manage.py test python_code_check_system.test_files.test_models --settings=umschool.settings --verbosity=2
 
     - name: Run form tests
       run: |
         cd umschool/
+        export $(cat ../.env | xargs)
         python manage.py test python_code_check_system.test_files.test_forms --settings=umschool.settings --verbosity=2
 
     - name: Run view tests
       run: |
         cd umschool/
+        export $(cat ../.env | xargs)
         python manage.py test python_code_check_system.test_files.test_views --settings=umschool.settings --verbosity=2
 
     - name: Run core system tests
       run: |
         cd umschool/
+        export $(cat ../.env | xargs)
         python manage.py test python_code_check_system.check_system.tests --settings=umschool.settings --verbosity=2
 
     - name: Run main tests
       run: |
         cd umschool/
+        export $(cat ../.env | xargs)
         python manage.py test python_code_check_system.tests --settings=umschool.settings --verbosity=2
 
     - name: Test coverage
       run: |
         cd umschool/
+        export $(cat ../.env | xargs)
         pip install coverage
         coverage run --source='.' manage.py test --settings=umschool.settings
         coverage report
