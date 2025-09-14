@@ -14,18 +14,14 @@ permissions:
 jobs:
   full-test:
     runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        python-version: [3.11, 3.12]
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.13
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: '3.13'
 
     - name: Copy env file
       run: cp env.example .env
@@ -192,6 +188,6 @@ jobs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: test-results-${{ matrix.python-version }}
+        name: test-results-python-3.13
         path: |
           umschool/test-results/
