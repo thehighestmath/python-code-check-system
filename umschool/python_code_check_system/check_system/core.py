@@ -90,7 +90,7 @@ def check(filepath: str, tests: list[DataInOut]) -> CheckResult:
         )
 
     results = []
-    base_dir = f'./data-{abs(hash(new_filepath))}'
+    base_dir = f'/tmp/data-{abs(hash(new_filepath))}'
     Path(base_dir).mkdir(exist_ok=True)
     error = ''
     for i, test in enumerate(tests):
