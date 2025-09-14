@@ -124,6 +124,22 @@ jobs:
       run: |
         cd umschool/
         export $(cat ../.env | xargs)
+        echo "Checking environment variables..."
+        echo "DATABASE_URL: $DATABASE_URL"
+        echo "DEBUG: $DEBUG"
+        echo "Checking database configuration..."
+        python -c "
+        import os
+        print(f'DATABASE_URL from os.environ: {os.environ.get(\"DATABASE_URL\")}')
+        print(f'DEBUG from os.environ: {os.environ.get(\"DEBUG\")}')
+        from django.conf import settings
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'umschool.settings')
+        import django
+        django.setup()
+        print(f'Database engine: {settings.DATABASES[\"default\"][\"ENGINE\"]}')
+        print(f'Database name: {settings.DATABASES[\"default\"][\"NAME\"]}')
+        print(f'Database host: {settings.DATABASES[\"default\"].get(\"HOST\", \"N/A\")}')
+        "
         echo "=== Running Model Tests ==="
         python manage.py test python_code_check_system.test_files.test_models --settings=umschool.settings --verbosity=2
         
