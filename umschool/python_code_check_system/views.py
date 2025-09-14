@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.conf import settings
 from django.http import HttpResponseBadRequest
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -119,8 +120,9 @@ class AddSolutionView(LoginRequiredMixin, CreateView):
                 form.instance.student = student
 
         response = super().form_valid(form)
-        # Запускаем проверку кода
-        check_stundet_code_task.delay(self.object.id)
+        # Запускаем проверку кода только если не в тестовом окружении
+        if not settings.TESTING:
+            check_stundet_code_task.delay(self.object.id)
         return response
 
 

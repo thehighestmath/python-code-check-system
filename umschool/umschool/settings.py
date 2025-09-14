@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import sys
 from os import environ
 from pathlib import Path
 
@@ -195,3 +196,6 @@ SESSION_CACHE_ALIAS = 'default'
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+# Тестовое окружение
+TESTING = 'test' in sys.argv
