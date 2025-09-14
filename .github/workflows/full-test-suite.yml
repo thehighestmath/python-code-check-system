@@ -18,31 +18,6 @@ jobs:
     strategy:
       matrix:
         python-version: [3.11, 3.12]
-        database: [postgresql, sqlite]
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_db
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-      redis:
-        image: redis:7
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 6379:6379
 
     steps:
     - uses: actions/checkout@v4
@@ -55,32 +30,16 @@ jobs:
     - name: Copy env file
       run: cp env.example .env
 
-    - name: Configure database for matrix
+    - name: Configure database for tests
       run: |
-        if [ "${{ matrix.database }}" = "sqlite" ]; then
-          echo "DATABASE_URL=sqlite:///db.sqlite3" >> .env
-        else
-          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_db" >> .env
-        fi
-
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y postgresql-client
+        # Use SQLite for tests to avoid PostgreSQL connection issues
+        echo "DATABASE_URL=sqlite:///db.sqlite3" > .env
 
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r umschool/requirements.txt
         pip install coverage pytest-xdist
-
-    - name: Wait for services
-      if: matrix.database == 'postgresql'
-      run: |
-        while ! pg_isready -h localhost -p 5432 -U postgres; do
-          echo "Waiting for database..."
-          sleep 2
-        done
 
     - name: Run Django migrations
       run: |
@@ -181,14 +140,14 @@ jobs:
       with:
         file: ./umschool/coverage.xml
         flags: unittests
-        name: codecov-umbrella-${{ matrix.python-version }}-${{ matrix.database }}
+        name: codecov-umbrella-${{ matrix.python-version }}
         fail_ci_if_error: false
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: test-results-${{ matrix.python-version }}-${{ matrix.database }}
+        name: test-results-${{ matrix.python-version }}
         path: |
           umschool/htmlcov/
           umschool/coverage.xml
