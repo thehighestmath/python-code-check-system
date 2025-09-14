@@ -38,8 +38,10 @@ COPY . .
 RUN mkdir -p /umschool/static /umschool/media
 
 # Устанавливаем права доступа ДО переключения пользователя
-RUN chmod +x entrypoint.sh entrypoint.test.sh && \
-    chown -R appuser:appuser /umschool
+RUN chmod +x entrypoint.sh entrypoint.test.sh
+
+# Устанавливаем владельца файлов
+RUN chown -R appuser:appuser /umschool
 
 # Переключаемся на непривилегированного пользователя
 USER appuser
