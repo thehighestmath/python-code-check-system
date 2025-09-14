@@ -186,8 +186,7 @@ jobs:
         
         print('Code execution system tests completed')
         "
-
-        fail_ci_if_error: false
+      continue-on-error: true
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
