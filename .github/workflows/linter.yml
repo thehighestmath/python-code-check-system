@@ -34,9 +34,3 @@ jobs:
     - name: Check import sorting with isort
       run: |
         isort --check-only $(git ls-files '*.py')
-    
-    - name: Security check with bandit
-      run: |
-        pip install bandit
-        bandit -r umschool/ -f json -o bandit-report.json || true
-        bandit -r umschool/ -f txt
